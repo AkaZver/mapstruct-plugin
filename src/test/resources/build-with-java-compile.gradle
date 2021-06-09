@@ -1,0 +1,12 @@
+plugins {
+    id 'java'
+    id 'ru.a_z.mapstruct'
+}
+
+allprojects {
+    afterEvaluate {
+        println tasks.withType(JavaCompile).forEach {
+            println "${it} -> ${it.options.allCompilerArgs}"
+        }
+    }
+}

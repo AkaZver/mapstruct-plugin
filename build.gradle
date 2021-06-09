@@ -1,0 +1,57 @@
+plugins {
+    id 'jacoco'
+    id 'maven-publish'
+    id 'java-gradle-plugin'
+    id 'org.sonarqube' version '3.2.0'
+    id 'com.gradle.plugin-publish' version '0.15.0'
+}
+
+group = 'ru.a_z.mapstruct'
+version = '1.0.0'
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+pluginBundle {
+    website = 'https://github.com/AkaZver'
+    vcsUrl = 'https://github.com/AkaZver/mapstruct-plugin'
+    tags = ['mapstruct']
+}
+
+gradlePlugin {
+    plugins {
+        mapstruct {
+            id = 'ru.a_z.mapstruct'
+            displayName = 'Mapstruct Plugin'
+            description = 'Automatic mapstruct configuration'
+            implementationClass = 'ru.a_z.gradle.plugins.mapstruct.MapstructPlugin'
+        }
+    }
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.assertj:assertj-core:3.19.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+}
+
+test {
+    useJUnitPlatform()
+    systemProperty 'java.util.logging.config.file', "${buildDir}/resources/test/logging-test.properties"
+}
+
+java {
+    withSourcesJar()
+}
+
+sonarqube {
+    properties {
+        property "sonar.projectKey", "AkaZver_mapstruct-plugin"
+        property "sonar.organization", "aka-zver"
+        property "sonar.host.url", "https://sonarcloud.io"
+    }
+}

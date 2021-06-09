@@ -1,0 +1,8 @@
+plugins {
+    id 'java'
+    id 'ru.a_z.mapstruct'
+}
+
+dependencies {
+    implementation 'org.springframework:spring-context:5.3.7'
+}

@@ -1,0 +1,9 @@
+plugins {
+    id 'java'
+    id 'ru.a_z.mapstruct'
+}
+
+dependencies {
+    implementation 'org.projectlombok:lombok:1.18.20'
+    annotationProcessor 'org.projectlombok:lombok:1.18.20'
+}

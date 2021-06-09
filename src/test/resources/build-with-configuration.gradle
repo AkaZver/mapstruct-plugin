@@ -1,0 +1,19 @@
+plugins {
+    id 'java'
+    id 'ru.a_z.mapstruct'
+}
+
+mapstruct {
+    suppressGeneratorTimestamp = true
+    verbose = true
+    suppressGeneratorVersionInfoComment = true
+    defaultComponentModel = 'spring'
+    defaultInjectionStrategy = 'constructor'
+    unmappedTargetPolicy = 'INFO'
+}
+
+allprojects {
+    afterEvaluate {
+        println "Mapstruct properties -> ${extensions.getByName('mapstruct').properties}"
+    }
+}
