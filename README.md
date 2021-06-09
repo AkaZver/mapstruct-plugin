@@ -1,6 +1,13 @@
-# Mapstruct Gradle Plugin
+[![Actions Status](https://github.com/AkaZver/mapstruct-plugin/workflows/Main/badge.svg)](https://github.com/AkaZver/mapstruct-plugin/actions)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=AkaZver_mapstruct-plugin&metric=alert_status)](https://sonarcloud.io/dashboard?id=AkaZver_mapstruct-plugin)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=AkaZver_mapstruct-plugin&metric=security_rating)](https://sonarcloud.io/dashboard?id=AkaZver_mapstruct-plugin)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=AkaZver_mapstruct-plugin&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=AkaZver_mapstruct-plugin)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=AkaZver_mapstruct-plugin&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=AkaZver_mapstruct-plugin)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=AkaZver_mapstruct-plugin&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=AkaZver_mapstruct-plugin)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=AkaZver_mapstruct-plugin&metric=coverage)](https://sonarcloud.io/dashboard?id=AkaZver_mapstruct-plugin)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FAkaZver%2Fmapstruct-plugin.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FAkaZver%2Fmapstruct-plugin?ref=badge_shield)
 
+# Mapstruct Gradle Plugin
 
 Gradle plugin for easy [mapstruct](https://mapstruct.org/) setup
 
@@ -35,7 +42,6 @@ mapstruct {
 
 All parameters used according to official 
 [documentation](https://mapstruct.org/documentation/stable/reference/html/#configuration-options)
-
 
 ## License
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FAkaZver%2Fmapstruct-plugin.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FAkaZver%2Fmapstruct-plugin?ref=badge_large)
