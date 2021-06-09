@@ -41,11 +41,16 @@ dependencies {
 
 test {
     useJUnitPlatform()
+    finalizedBy jacocoTestReport
     systemProperty 'java.util.logging.config.file', "${buildDir}/resources/test/logging-test.properties"
 }
 
 java {
     withSourcesJar()
+}
+
+jacocoTestReport {
+    dependsOn test
 }
 
 sonarqube {
