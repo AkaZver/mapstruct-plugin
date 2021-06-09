@@ -26,14 +26,14 @@ import static ru.a_z.gradle.plugins.mapstruct.PluginDependency.*;
 /**
  * Tests for whole {@link MapstructPlugin}
  */
-public class MapstructPluginTest {
+class MapstructPluginTest {
 
     @TempDir
     protected File tempDirectory;
     private Project project;
 
     @BeforeEach
-    public void setUpBeforeEach() {
+    void setUpBeforeEach() {
         project = ProjectBuilder
                 .builder()
                 .withProjectDir(tempDirectory)
@@ -42,7 +42,7 @@ public class MapstructPluginTest {
     }
 
     @Test
-    public void pluginAttached() {
+    void pluginAttached() {
         addBuildFile("build-base.gradle");
 
         assertDoesNotThrow(() -> project.getPluginManager().apply(MapstructPlugin.class));
@@ -62,7 +62,7 @@ public class MapstructPluginTest {
     }
 
     @Test
-    public void pluginConfigured() {
+    void pluginConfigured() {
         addBuildFile("build-with-configuration.gradle");
 
         String gradleOutput = executeGradle("clean");
@@ -80,7 +80,7 @@ public class MapstructPluginTest {
     }
 
     @Test
-    public void filledCompilerArguments() {
+    void filledCompilerArguments() {
         addBuildFile("build-with-java-compile.gradle");
 
         String gradleOutput = executeGradle("clean");
@@ -98,7 +98,7 @@ public class MapstructPluginTest {
     }
 
     @Test
-    public void mapstructDependenciesAdded() {
+    void mapstructDependenciesAdded() {
         addBuildFile("build-base.gradle");
 
         String gradleOutput = executeGradle("dependencies");
@@ -112,7 +112,7 @@ public class MapstructPluginTest {
     }
 
     @Test
-    public void lombokDependenciesAdded() {
+    void lombokDependenciesAdded() {
         addBuildFile("build-with-lombok-dependencies.gradle");
 
         String gradleOutput = executeGradle("dependencies");
@@ -126,7 +126,7 @@ public class MapstructPluginTest {
     }
 
     @Test
-    public void springDependenciesAdded() {
+    void springDependenciesAdded() {
         addBuildFile("build-with-spring-dependencies.gradle");
 
         String gradleOutput = executeGradle("dependencies");
