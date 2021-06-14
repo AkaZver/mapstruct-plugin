@@ -6,7 +6,7 @@ plugins {
     id 'com.gradle.plugin-publish' version '0.15.0'
 }
 
-group = 'ru.a_z.mapstruct'
+group = 'com.github.akazver.mapstruct'
 version = '1.0.0'
 
 sourceCompatibility = '1.8'
@@ -21,10 +21,10 @@ pluginBundle {
 gradlePlugin {
     plugins {
         mapstruct {
-            id = 'ru.a_z.mapstruct'
+            id = 'com.github.akazver.mapstruct'
             displayName = 'Mapstruct Plugin'
             description = 'Automatic mapstruct configuration'
-            implementationClass = 'ru.a_z.gradle.plugins.mapstruct.MapstructPlugin'
+            implementationClass = 'com.github.akazver.gradle.plugins.mapstruct.MapstructPlugin'
         }
     }
 }

@@ -1,8 +1,9 @@
-package ru.a_z.gradle.plugins.mapstruct;
+package com.github.akazver.gradle.plugins.mapstruct;
 
 import org.gradle.api.Project;
 import org.gradle.testfixtures.ProjectBuilder;
 import org.gradle.testkit.runner.GradleRunner;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -21,7 +22,7 @@ import java.util.stream.Collectors;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static ru.a_z.gradle.plugins.mapstruct.PluginDependency.*;
+import static com.github.akazver.gradle.plugins.mapstruct.PluginDependency.*;
 
 /**
  * Tests for whole {@link MapstructPlugin}
@@ -46,7 +47,7 @@ class MapstructPluginTest {
         addBuildFile("build-base.gradle");
 
         assertDoesNotThrow(() -> project.getPluginManager().apply(MapstructPlugin.class));
-        assertDoesNotThrow(() -> project.getPlugins().getPlugin(MapstructPlugin.class));
+        Assertions.assertDoesNotThrow(() -> project.getPlugins().getPlugin(MapstructPlugin.class));
 
         MapstructExtension extension = project.getExtensions().findByType(MapstructExtension.class);
         assertThat(extension).isNotNull();
