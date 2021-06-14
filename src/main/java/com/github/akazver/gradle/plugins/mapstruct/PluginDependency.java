@@ -1,4 +1,4 @@
-package ru.a_z.gradle.plugins.mapstruct;
+package com.github.akazver.gradle.plugins.mapstruct;
 
 /**
  * Description for all plugin dependencies

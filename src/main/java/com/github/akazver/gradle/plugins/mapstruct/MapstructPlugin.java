@@ -1,4 +1,4 @@
-package ru.a_z.gradle.plugins.mapstruct;
+package com.github.akazver.gradle.plugins.mapstruct;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static ru.a_z.gradle.plugins.mapstruct.PluginDependency.*;
+import static com.github.akazver.gradle.plugins.mapstruct.PluginDependency.*;
 
 /**
  * Plugin implementation which adds necessary dependencies and compiler options
