@@ -3,10 +3,13 @@ package com.github.akazver.gradle.plugins.mapstruct;
 import org.gradle.api.Project;
 import org.gradle.testfixtures.ProjectBuilder;
 import org.gradle.testkit.runner.GradleRunner;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,11 +21,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import static com.github.akazver.gradle.plugins.mapstruct.PluginDependency.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static com.github.akazver.gradle.plugins.mapstruct.PluginDependency.*;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 /**
  * Tests for whole {@link MapstructPlugin}
@@ -43,11 +48,12 @@ class MapstructPluginTest {
     }
 
     @Test
+    @DisplayName("Plugin attached")
     void pluginAttached() {
         addBuildFile("build-base.gradle");
 
         assertDoesNotThrow(() -> project.getPluginManager().apply(MapstructPlugin.class));
-        Assertions.assertDoesNotThrow(() -> project.getPlugins().getPlugin(MapstructPlugin.class));
+        assertDoesNotThrow(() -> project.getPlugins().getPlugin(MapstructPlugin.class));
 
         MapstructExtension extension = project.getExtensions().findByType(MapstructExtension.class);
         assertThat(extension).isNotNull();
@@ -62,12 +68,26 @@ class MapstructPluginTest {
         });
     }
 
-    @Test
-    void pluginConfigured() {
-        addBuildFile("build-with-configuration.gradle");
+    @ParameterizedTest(name = "[{index}] Plugin configured with {0}")
+    @MethodSource("fetchArgumentsWithConfiguration")
+    void pluginConfigured(String buildFile, List<String> params) {
+        addBuildFile(buildFile);
+        assertThat(executeGradle("clean")).contains(params);
+    }
 
-        String gradleOutput = executeGradle("clean");
+    @ParameterizedTest(name = "[{index}] Dependencies added from {0}")
+    @MethodSource("fetchArgumentsWithDependencies")
+    void dependenciesAdded(String buildFile, List<String> whiteList, List<String> blackList) {
+        addBuildFile(buildFile);
 
+        assertThat(executeGradle("dependencies"))
+                .contains(whiteList)
+                .doesNotContain(blackList);
+    }
+
+    // MethodSource for pluginConfigured
+    @SuppressWarnings("unused")
+    private static Stream<Arguments> fetchArgumentsWithConfiguration() {
         List<String> pluginParams = Arrays.asList(
                 "suppressGeneratorTimestamp:true",
                 "verbose:true",
@@ -76,15 +96,6 @@ class MapstructPluginTest {
                 "defaultInjectionStrategy:constructor",
                 "unmappedTargetPolicy:INFO"
         );
-
-        assertThat(gradleOutput).contains(pluginParams);
-    }
-
-    @Test
-    void filledCompilerArguments() {
-        addBuildFile("build-with-java-compile.gradle");
-
-        String gradleOutput = executeGradle("clean");
 
         List<String> pluginArgs = Arrays.asList(
                 "-Amapstruct.suppressGeneratorTimestamp=false",
@@ -95,52 +106,31 @@ class MapstructPluginTest {
                 "-Amapstruct.unmappedTargetPolicy=WARN"
         );
 
-        assertThat(gradleOutput).contains(pluginArgs);
+        return Stream.of(
+                arguments("build-with-configuration.gradle", pluginParams),
+                arguments("build-with-java-compile.gradle", pluginArgs)
+        );
     }
 
-    @Test
-    void mapstructDependenciesAdded() {
-        addBuildFile("build-base.gradle");
+    // MethodSource for dependenciesAdded
+    @SuppressWarnings("unused")
+    private static Stream<Arguments> fetchArgumentsWithDependencies() {
+        return Stream.of(
+                arguments("build-base.gradle",
+                        toList(MAPSTRUCT, MAPSTRUCT_PROCESSOR),
+                        toList(LOMBOK, LOMBOK_MAPSTRUCT_BINDING, MAPSTRUCT_SPRING_EXTENSIONS)),
 
-        String gradleOutput = executeGradle("dependencies");
+                arguments("build-with-lombok-dependencies.gradle",
+                        toList(LOMBOK, LOMBOK_MAPSTRUCT_BINDING, MAPSTRUCT, MAPSTRUCT_PROCESSOR),
+                        toList(MAPSTRUCT_SPRING_EXTENSIONS)),
 
-        List<String> whiteList = toList(MAPSTRUCT, MAPSTRUCT_PROCESSOR);
-        List<String> blackList = toList(LOMBOK, LOMBOK_MAPSTRUCT_BINDING, MAPSTRUCT_SPRING_EXTENSIONS);
-
-        assertThat(gradleOutput)
-                .contains(whiteList)
-                .doesNotContain(blackList);
+                arguments("build-with-spring-dependencies.gradle",
+                        toList(MAPSTRUCT, MAPSTRUCT_PROCESSOR, MAPSTRUCT_SPRING_EXTENSIONS),
+                        toList(LOMBOK, LOMBOK_MAPSTRUCT_BINDING))
+        );
     }
 
-    @Test
-    void lombokDependenciesAdded() {
-        addBuildFile("build-with-lombok-dependencies.gradle");
-
-        String gradleOutput = executeGradle("dependencies");
-
-        List<String> whiteList = toList(LOMBOK, LOMBOK_MAPSTRUCT_BINDING, MAPSTRUCT, MAPSTRUCT_PROCESSOR);
-        List<String> blackList = toList(MAPSTRUCT_SPRING_EXTENSIONS);
-
-        assertThat(gradleOutput)
-                .contains(whiteList)
-                .doesNotContain(blackList);
-    }
-
-    @Test
-    void springDependenciesAdded() {
-        addBuildFile("build-with-spring-dependencies.gradle");
-
-        String gradleOutput = executeGradle("dependencies");
-
-        List<String> whiteList = toList(MAPSTRUCT, MAPSTRUCT_PROCESSOR, MAPSTRUCT_SPRING_EXTENSIONS);
-        List<String> blackList = toList(LOMBOK, LOMBOK_MAPSTRUCT_BINDING);
-
-        assertThat(gradleOutput)
-                .contains(whiteList)
-                .doesNotContain(blackList);
-    }
-
-    private List<String> toList(PluginDependency... pluginDependency) {
+    private static List<String> toList(PluginDependency... pluginDependency) {
         return Arrays.stream(pluginDependency)
                 .map(PluginDependency::getId)
                 .collect(Collectors.toList());
