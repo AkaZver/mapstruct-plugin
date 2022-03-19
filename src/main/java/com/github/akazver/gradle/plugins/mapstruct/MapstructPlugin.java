@@ -6,9 +6,13 @@ import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.tasks.compile.JavaCompile;
 
+import java.beans.IntrospectionException;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
 import static com.github.akazver.gradle.plugins.mapstruct.PluginDependency.*;
@@ -19,7 +23,6 @@ import static com.github.akazver.gradle.plugins.mapstruct.PluginDependency.*;
 public class MapstructPlugin implements Plugin<Project> {
 
     private static final String ARGUMENT_PATTERN = "-Amapstruct.%s=%s";
-    private static final String SPRING_GROUP = "org.springframework";
 
     @Override
     public void apply(Project project) {
@@ -56,7 +59,9 @@ public class MapstructPlugin implements Plugin<Project> {
 
         if (hasLombok && !hasBinding) {
             addDependency(project, LOMBOK_MAPSTRUCT_BINDING);
-        } else if (hasSpring) {
+        }
+
+        if (hasSpring) {
             addDependency(project, MAPSTRUCT_SPRING_EXTENSIONS);
         }
     }
@@ -72,22 +77,36 @@ public class MapstructPlugin implements Plugin<Project> {
     }
 
     private boolean isSpring(Dependency dependency) {
-        return SPRING_GROUP.equals(dependency.getGroup());
+        return "org.springframework".equals(dependency.getGroup());
     }
 
     private void addCompilerArguments(Project project) {
         MapstructExtension extension = project.getExtensions().getByType(MapstructExtension.class);
 
-        Function<MapstructArgument, String> fetchCompilerArgument = value ->
-                String.format(ARGUMENT_PATTERN, value.getName(), value.getAccessor().apply(extension).get());
+        UnaryOperator<String> fetchCompilerArg = name -> {
+            try {
+                PropertyDescriptor descriptor = new PropertyDescriptor(name, MapstructExtension.class);
+                Object value = descriptor.getReadMethod().invoke(extension);
 
-        List<String> compilerArguments = Arrays
-                .stream(MapstructArgument.values())
-                .map(fetchCompilerArgument)
+                return String.format(ARGUMENT_PATTERN, name, value);
+            } catch (IllegalAccessException | InvocationTargetException | IntrospectionException exception) {
+                String message = "Can't fetch compiler argument for " + name;
+                throw new IllegalStateException(message, exception);
+            }
+        };
+
+        List<String> compilerArgs = Arrays
+                .stream(MapstructExtension.class.getDeclaredFields())
+                .map(Field::getName)
+                .map(fetchCompilerArg)
                 .collect(Collectors.toList());
 
-        project.getTasks().withType(JavaCompile.class).forEach(task ->
-                task.getOptions().getCompilerArgs().addAll(compilerArguments));
+        project.getTasks()
+                .withType(JavaCompile.class)
+                .getByName("compileJava")
+                .getOptions()
+                .getCompilerArgs()
+                .addAll(compilerArgs);
     }
 
 }

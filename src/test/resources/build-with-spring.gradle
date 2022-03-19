@@ -1,0 +1,8 @@
+plugins {
+    id 'com.github.akazver.mapstruct'
+    id 'java'
+}
+
+dependencies {
+    implementation 'org.springframework:spring-context:5.3.17'
+}
