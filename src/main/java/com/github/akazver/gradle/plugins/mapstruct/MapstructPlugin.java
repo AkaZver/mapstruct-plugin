@@ -36,11 +36,11 @@ public class MapstructPlugin implements Plugin<Project> {
         });
     }
 
-    private void addDependency(Project project, PluginDependency pluginDependency) {
+    protected void addDependency(Project project, PluginDependency pluginDependency) {
         project.getDependencies().add(pluginDependency.getConfiguration(), pluginDependency.getId());
     }
 
-    private void addOptionalDependencies(Project project) {
+    protected void addOptionalDependencies(Project project) {
         boolean hasLombok = false;
         boolean hasBinding = false;
         boolean hasSpring = false;
@@ -66,21 +66,21 @@ public class MapstructPlugin implements Plugin<Project> {
         }
     }
 
-    private boolean isLombok(Dependency dependency) {
+    protected boolean isLombok(Dependency dependency) {
         return LOMBOK.getGroup().equals(dependency.getGroup())
                 && LOMBOK.getName().equals(dependency.getName());
     }
 
-    private boolean isBinding(Dependency dependency) {
+    protected boolean isBinding(Dependency dependency) {
         return LOMBOK_MAPSTRUCT_BINDING.getGroup().equals(dependency.getGroup())
                 && LOMBOK_MAPSTRUCT_BINDING.getName().equals(dependency.getName());
     }
 
-    private boolean isSpring(Dependency dependency) {
+    protected boolean isSpring(Dependency dependency) {
         return "org.springframework".equals(dependency.getGroup());
     }
 
-    private void addCompilerArguments(Project project) {
+    protected void addCompilerArguments(Project project) {
         MapstructExtension extension = project.getExtensions().getByType(MapstructExtension.class);
 
         UnaryOperator<String> fetchCompilerArg = name -> {
@@ -97,6 +97,7 @@ public class MapstructPlugin implements Plugin<Project> {
 
         List<String> compilerArgs = Arrays
                 .stream(MapstructExtension.class.getDeclaredFields())
+                .filter(field -> !field.isSynthetic())
                 .map(Field::getName)
                 .map(fetchCompilerArg)
                 .collect(Collectors.toList());
