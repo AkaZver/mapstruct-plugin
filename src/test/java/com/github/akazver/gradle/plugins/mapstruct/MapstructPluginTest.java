@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -108,7 +109,8 @@ class MapstructPluginTest {
 
         return Stream.of(
                 arguments("build-with-configuration.gradle", pluginParams),
-                arguments("build-with-java-compile.gradle", pluginArgs)
+                arguments("build-with-java-compile.gradle", pluginArgs),
+                arguments("build-with-java-test-compile.gradle", Collections.singletonList("Compiler args -> []"))
         );
     }
 
@@ -120,13 +122,25 @@ class MapstructPluginTest {
                         toList(MAPSTRUCT, MAPSTRUCT_PROCESSOR),
                         toList(LOMBOK, LOMBOK_MAPSTRUCT_BINDING, MAPSTRUCT_SPRING_EXTENSIONS)),
 
-                arguments("build-with-lombok-dependencies.gradle",
+                arguments("build-with-lombok.gradle",
                         toList(LOMBOK, LOMBOK_MAPSTRUCT_BINDING, MAPSTRUCT, MAPSTRUCT_PROCESSOR),
                         toList(MAPSTRUCT_SPRING_EXTENSIONS)),
 
-                arguments("build-with-spring-dependencies.gradle",
+                arguments("build-with-lombok-plugin.gradle",
+                        toList(LOMBOK, LOMBOK_MAPSTRUCT_BINDING, MAPSTRUCT, MAPSTRUCT_PROCESSOR),
+                        toList(MAPSTRUCT_SPRING_EXTENSIONS)),
+
+                arguments("build-with-spring.gradle",
                         toList(MAPSTRUCT, MAPSTRUCT_PROCESSOR, MAPSTRUCT_SPRING_EXTENSIONS),
-                        toList(LOMBOK, LOMBOK_MAPSTRUCT_BINDING))
+                        toList(LOMBOK, LOMBOK_MAPSTRUCT_BINDING)),
+
+                arguments("build-with-lombok-and-spring.gradle",
+                        toList(LOMBOK, LOMBOK_MAPSTRUCT_BINDING, MAPSTRUCT, MAPSTRUCT_PROCESSOR, MAPSTRUCT_SPRING_EXTENSIONS),
+                        Collections.singletonList("No blacklist for 'build-with-lombok-and-spring' variant")),
+
+                arguments("build-with-lombok-plugin-and-spring.gradle",
+                        toList(LOMBOK, LOMBOK_MAPSTRUCT_BINDING, MAPSTRUCT, MAPSTRUCT_PROCESSOR, MAPSTRUCT_SPRING_EXTENSIONS),
+                        Collections.singletonList("No blacklist for 'build-with-lombok-plugin-and-spring' variant"))
         );
     }
 

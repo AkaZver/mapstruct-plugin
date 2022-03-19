@@ -1,47 +1,44 @@
 package com.github.akazver.gradle.plugins.mapstruct;
 
-import static com.github.akazver.gradle.plugins.mapstruct.ConfigurationType.ANNOTATION_PROCESSOR;
-import static com.github.akazver.gradle.plugins.mapstruct.ConfigurationType.IMPLEMENTATION;
-
 /**
  * Description for all plugin dependencies
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "java:S1192"})
 public enum PluginDependency {
 
     LOMBOK(
-            ANNOTATION_PROCESSOR.getName(),
+            "annotationProcessor",
             "org.projectlombok",
             "lombok",
-            "1.18.20"
+            "1.18.22"
     ),
 
     LOMBOK_MAPSTRUCT_BINDING(
-            ANNOTATION_PROCESSOR.getName(),
+            "annotationProcessor",
             "org.projectlombok",
             "lombok-mapstruct-binding",
             "0.2.0"
     ),
 
     MAPSTRUCT(
-            IMPLEMENTATION.getName(),
+            "implementation",
             "org.mapstruct",
             "mapstruct",
             "1.4.2.Final"
     ),
 
     MAPSTRUCT_PROCESSOR(
-            ANNOTATION_PROCESSOR.getName(),
+            "annotationProcessor",
             "org.mapstruct",
             "mapstruct-processor",
             "1.4.2.Final"
     ),
 
     MAPSTRUCT_SPRING_EXTENSIONS(
-            IMPLEMENTATION.getName(),
+            "implementation",
             "org.mapstruct.extensions.spring",
             "mapstruct-spring-extensions",
-            "0.0.3"
+            "0.1.1"
     );
 
     private final String configuration;

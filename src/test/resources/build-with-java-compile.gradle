@@ -1,12 +1,10 @@
 plugins {
-    id 'java'
     id 'com.github.akazver.mapstruct'
+    id 'java'
 }
 
 allprojects {
     afterEvaluate {
-        println tasks.withType(JavaCompile).forEach {
-            println "${it} -> ${it.options.allCompilerArgs}"
-        }
+        println "Compiler args -> ${tasks.withType(JavaCompile).getByName('compileJava').options.allCompilerArgs}"
     }
 }

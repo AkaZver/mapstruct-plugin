@@ -1,0 +1,9 @@
+plugins {
+    id 'com.github.akazver.mapstruct'
+    id 'java'
+}
+
+dependencies {
+    implementation 'org.projectlombok:lombok:1.18.22'
+    annotationProcessor 'org.projectlombok:lombok:1.18.22'
+}
