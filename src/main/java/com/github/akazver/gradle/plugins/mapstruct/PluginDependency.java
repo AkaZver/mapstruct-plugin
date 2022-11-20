@@ -1,11 +1,15 @@
 package com.github.akazver.gradle.plugins.mapstruct;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 
 /**
  * Description for all plugin dependencies
  */
 @Getter
+@ToString
+@EqualsAndHashCode
 @SuppressWarnings("java:S1192")
 public class PluginDependency {
 
@@ -38,9 +42,16 @@ public class PluginDependency {
     );
 
     public static final PluginDependency MAPSTRUCT_SPRING_EXTENSIONS = new PluginDependency(
-            "implementation",
+            "annotationProcessor",
             "org.mapstruct.extensions.spring",
             "mapstruct-spring-extensions",
+            "0.1.2"
+    );
+
+    public static final PluginDependency MAPSTRUCT_SPRING_ANNOTATIONS = new PluginDependency(
+            "implementation",
+            "org.mapstruct.extensions.spring",
+            "mapstruct-spring-annotations",
             "0.1.2"
     );
 
@@ -71,11 +82,6 @@ public class PluginDependency {
         this.group = split[0];
         this.name = split[1];
         this.version = split[2];
-    }
-
-    @Override
-    public String toString() {
-        return String.format("PluginDependency{configuration='%s', id='%s'}", configuration, id);
     }
 
 }

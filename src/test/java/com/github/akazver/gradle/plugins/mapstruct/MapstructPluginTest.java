@@ -10,28 +10,21 @@ import org.gradle.api.internal.plugins.ExtensionContainerInternal;
 import org.gradle.api.internal.project.DefaultProject;
 import org.gradle.api.plugins.ExtensionContainer;
 import org.gradle.api.plugins.JavaPlugin;
-import org.gradle.api.plugins.PluginContainer;
 import org.gradle.api.plugins.PluginManager;
 import org.gradle.api.tasks.compile.JavaCompile;
 import org.gradle.testfixtures.ProjectBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static com.github.akazver.gradle.plugins.mapstruct.PluginDependency.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.*;
 
 /**
@@ -52,58 +45,105 @@ class MapstructPluginTest {
     @DisplayName("Apply")
     void apply() {
         Project project = fetchProject();
-        PluginContainer plugins = project.getPlugins();
-        ExtensionContainer extensions = project.getExtensions();
 
-        assertThat(plugins.hasPlugin("com.github.akazver.mapstruct")).isTrue();
-        assertThat(extensions.findByName("mapstruct")).isNotNull();
+        assertThat(project.getPlugins().hasPlugin("com.github.akazver.mapstruct")).isTrue();
+        assertThat(project.getExtensions().findByName("mapstruct")).isNotNull();
     }
 
     @Test
     @DisplayName("Add dependency")
     void addDependency() {
         Project project = fetchProject();
-        List<Dependency> annotationProcessors = fetchDependencies(project, "annotationProcessor");
-        List<Dependency> implementations = fetchDependencies(project, "implementation");
 
-        assertThat(annotationProcessors)
+        assertThat(fetchDependencies(project, "annotationProcessor"))
                 .hasSize(1)
                 .first()
                 .extracting(this::fetchDependencyId)
                 .isEqualTo(MAPSTRUCT_PROCESSOR.getId());
 
-        assertThat(implementations)
+        assertThat(fetchDependencies(project, "implementation"))
                 .hasSize(1)
                 .first()
                 .extracting(this::fetchDependencyId)
                 .isEqualTo(MAPSTRUCT.getId());
     }
 
-    @ParameterizedTest
-    @MethodSource("fetchOptionalDependencyArguments")
-    @DisplayName("Add optional dependencies")
-    void addOptionalDependencies(List<PluginDependency> pluginDependencies, int annotationProcessorSize) {
-        Project project = fetchProject(pluginDependencies);
-        List<Dependency> annotationProcessors = fetchDependencies(project, "annotationProcessor");
-        List<Dependency> implementations = fetchDependencies(project, "implementation");
+    @Test
+    @DisplayName("Add optional dependencies without binding")
+    void addOptionalDependenciesWithoutBinding() {
+        Project project = fetchProject(SOME_SPRING_LIBRARY, LOMBOK);
 
-        String[] expectedAnnotationProcessorIds = {
-                LOMBOK.getId(), MAPSTRUCT_PROCESSOR.getId(), LOMBOK_MAPSTRUCT_BINDING.getId()
+        String[] expectedAnnotationProcessor = {
+                LOMBOK.getId(), LOMBOK_MAPSTRUCT_BINDING.getId(),
+                MAPSTRUCT_SPRING_EXTENSIONS.getId(), MAPSTRUCT_PROCESSOR.getId()
         };
 
-        String[] expectedImplementationIds = {
-                SOME_SPRING_LIBRARY.getId(), MAPSTRUCT.getId(), MAPSTRUCT_SPRING_EXTENSIONS.getId()
+        String[] expectedImplementation = {
+                SOME_SPRING_LIBRARY.getId(), MAPSTRUCT.getId(),
+                MAPSTRUCT_SPRING_ANNOTATIONS.getId()
         };
 
-        assertThat(annotationProcessors)
-                .hasSize(annotationProcessorSize)
+        assertThat(fetchDependencies(project, "annotationProcessor"))
+                .hasSize(expectedAnnotationProcessor.length)
                 .extracting(this::fetchDependencyId)
-                .contains(expectedAnnotationProcessorIds);
+                .contains(expectedAnnotationProcessor);
 
-        assertThat(implementations)
-                .hasSize(3)
+        assertThat(fetchDependencies(project, "implementation"))
+                .hasSize(expectedImplementation.length)
                 .extracting(this::fetchDependencyId)
-                .contains(expectedImplementationIds);
+                .contains(expectedImplementation);
+    }
+
+    @Test
+    @DisplayName("Add optional dependencies with binding")
+    void addOptionalDependenciesWithBinding() {
+        Project project = fetchProject(LOMBOK_MAPSTRUCT_BINDING, SOME_SPRING_LIBRARY, LOMBOK);
+
+        String[] expectedAnnotationProcessor = {
+                LOMBOK.getId(), LOMBOK_MAPSTRUCT_BINDING.getId(),
+                MAPSTRUCT_SPRING_EXTENSIONS.getId(), MAPSTRUCT_PROCESSOR.getId()
+        };
+
+        String[] expectedImplementation = {
+                SOME_SPRING_LIBRARY.getId(), MAPSTRUCT.getId(),
+                MAPSTRUCT_SPRING_ANNOTATIONS.getId()
+        };
+
+        assertThat(fetchDependencies(project, "annotationProcessor"))
+                .hasSize(expectedAnnotationProcessor.length)
+                .extracting(this::fetchDependencyId)
+                .contains(expectedAnnotationProcessor);
+
+        assertThat(fetchDependencies(project, "implementation"))
+                .hasSize(expectedImplementation.length)
+                .extracting(this::fetchDependencyId)
+                .contains(expectedImplementation);
+    }
+
+    @Test
+    @DisplayName("Add optional dependencies with incorrect binding")
+    void addOptionalDependenciesWithIncorrectBinding() {
+        Project project = fetchProject(SOME_LOMBOK_LIBRARY, SOME_SPRING_LIBRARY, LOMBOK);
+
+        String[] expectedAnnotationProcessor = {
+                LOMBOK.getId(), MAPSTRUCT_PROCESSOR.getId(), LOMBOK_MAPSTRUCT_BINDING.getId(),
+                MAPSTRUCT_SPRING_EXTENSIONS.getId(), SOME_LOMBOK_LIBRARY.getId()
+        };
+
+        String[] expectedImplementation = {
+                SOME_SPRING_LIBRARY.getId(), MAPSTRUCT.getId(),
+                MAPSTRUCT_SPRING_ANNOTATIONS.getId()
+        };
+
+        assertThat(fetchDependencies(project, "annotationProcessor"))
+                .hasSize(expectedAnnotationProcessor.length)
+                .extracting(this::fetchDependencyId)
+                .contains(expectedAnnotationProcessor);
+
+        assertThat(fetchDependencies(project, "implementation"))
+                .hasSize(expectedImplementation.length)
+                .extracting(this::fetchDependencyId)
+                .contains(expectedImplementation);
     }
 
     @Test
@@ -113,22 +153,18 @@ class MapstructPluginTest {
         project.getPluginManager().apply(LombokPlugin.class);
         evaluate(project);
 
-        List<Dependency> annotationProcessors = fetchDependencies(project, "annotationProcessor");
-        List<Dependency> implementations = fetchDependencies(project, "implementation");
-        PluginContainer plugins = project.getPlugins();
-        ExtensionContainer extensions = project.getExtensions();
-
         DependencySet lombokDefaultDependencies = project.getConfigurations()
                 .getByName("lombok")
                 .getIncoming()
                 .getDependencies();
 
-        String[] expectedAnnotationProcessorIds = {
-                MAPSTRUCT_PROCESSOR.getId(), LOMBOK_MAPSTRUCT_BINDING.getId()
+        String[] expectedAnnotationProcessor = {
+                LOMBOK.getId(), MAPSTRUCT_PROCESSOR.getId(),
+                LOMBOK_MAPSTRUCT_BINDING.getId()
         };
 
-        assertThat(plugins.hasPlugin("io.freefair.lombok")).isTrue();
-        assertThat(extensions.findByName("lombok")).isNotNull();
+        assertThat(project.getPlugins().hasPlugin("io.freefair.lombok")).isTrue();
+        assertThat(project.getExtensions().findByName("lombok")).isNotNull();
 
         assertThat(lombokDefaultDependencies)
                 .hasSize(1)
@@ -136,12 +172,12 @@ class MapstructPluginTest {
                 .extracting(this::fetchDependencyId)
                 .isEqualTo(LOMBOK.getId());
 
-        assertThat(annotationProcessors)
-                .hasSize(2)
+        assertThat(fetchDependencies(project, "annotationProcessor"))
+                .hasSize(expectedAnnotationProcessor.length)
                 .extracting(this::fetchDependencyId)
-                .contains(expectedAnnotationProcessorIds);
+                .contains(expectedAnnotationProcessor);
 
-        assertThat(implementations)
+        assertThat(fetchDependencies(project, "implementation"))
                 .hasSize(1)
                 .extracting(this::fetchDependencyId)
                 .contains(MAPSTRUCT.getId());
@@ -206,38 +242,17 @@ class MapstructPluginTest {
                 .hasMessage("Dependency id is invalid: broken");
     }
 
-    private static Stream<Arguments> fetchOptionalDependencyArguments() {
-        List<PluginDependency> dependenciesWithoutBinding = new ArrayList<>();
-        dependenciesWithoutBinding.add(SOME_SPRING_LIBRARY);
-        dependenciesWithoutBinding.add(LOMBOK);
-
-        List<PluginDependency> dependenciesWithBinding = new ArrayList<>();
-        dependenciesWithBinding.add(LOMBOK_MAPSTRUCT_BINDING);
-        dependenciesWithBinding.add(SOME_SPRING_LIBRARY);
-        dependenciesWithBinding.add(LOMBOK);
-
-        List<PluginDependency> dependenciesWithIncorrectBinding = new ArrayList<>();
-        dependenciesWithIncorrectBinding.add(SOME_LOMBOK_LIBRARY);
-        dependenciesWithIncorrectBinding.add(SOME_SPRING_LIBRARY);
-        dependenciesWithIncorrectBinding.add(LOMBOK);
-
-        return Stream.of(
-                arguments(dependenciesWithoutBinding, 3),
-                arguments(dependenciesWithBinding, 3),
-                arguments(dependenciesWithIncorrectBinding, 4)
-        );
-    }
-
     private Project fetchProject() {
         return evaluate(fetchBaseProject());
     }
 
-    private Project fetchProject(List<PluginDependency> pluginDependencies) {
+    private Project fetchProject(PluginDependency... pluginDependencies) {
         Project project = fetchBaseProject();
         DependencyHandler dependencies = project.getDependencies();
 
-        pluginDependencies.forEach(pluginDependency ->
-                dependencies.add(pluginDependency.getConfiguration(), pluginDependency.getId()));
+        for (PluginDependency pluginDependency : pluginDependencies) {
+            dependencies.add(pluginDependency.getConfiguration(), pluginDependency.getId());
+        }
 
         return evaluate(project);
     }

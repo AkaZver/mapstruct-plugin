@@ -12,6 +12,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
@@ -41,7 +42,7 @@ public class MapstructPlugin implements Plugin<Project> {
     }
 
     private void addOptionalDependencies(Project project) {
-        boolean hasLombok = project.getConfigurations().findByName("lombok") != null;
+        boolean hasLombok = Objects.nonNull(project.getConfigurations().findByName("lombok"));
         boolean hasBinding = false;
         boolean hasSpring = false;
 
@@ -63,6 +64,7 @@ public class MapstructPlugin implements Plugin<Project> {
 
         if (hasSpring) {
             addDependency(project, MAPSTRUCT_SPRING_EXTENSIONS);
+            addDependency(project, MAPSTRUCT_SPRING_ANNOTATIONS);
         }
     }
 

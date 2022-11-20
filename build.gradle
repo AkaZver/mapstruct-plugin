@@ -8,7 +8,7 @@ plugins {
 }
 
 group = 'com.github.akazver.mapstruct'
-version = '1.0.3'
+version = '1.0.4'
 
 pluginBundle {
     website = 'https://github.com/AkaZver'
