@@ -14,7 +14,7 @@ Gradle plugin for easy [mapstruct](https://mapstruct.org/) setup
 Installation:
 ```groovy
 plugins {
-    id 'com.github.akazver.mapstruct' version '1.0.3'
+    id 'com.github.akazver.mapstruct' version '1.0.4'
 }
 ```
 
