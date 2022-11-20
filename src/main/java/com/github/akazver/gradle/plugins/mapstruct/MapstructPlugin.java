@@ -41,7 +41,7 @@ public class MapstructPlugin implements Plugin<Project> {
     }
 
     private void addOptionalDependencies(Project project) {
-        boolean hasLombok = false;
+        boolean hasLombok = project.getConfigurations().findByName("lombok") != null;
         boolean hasBinding = false;
         boolean hasSpring = false;
 
