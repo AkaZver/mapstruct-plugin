@@ -22,7 +22,7 @@ import static com.github.akazver.gradle.plugins.mapstruct.PluginDependency.*;
  */
 public class MapstructPlugin implements Plugin<Project> {
 
-    private static final String ARGUMENT_PATTERN = "-Amapstruct.%s=%s";
+    private static final String COMPILER_ARG_PATTERN = "-Amapstruct.%s=%s";
 
     @Override
     public void apply(Project project) {
@@ -32,26 +32,26 @@ public class MapstructPlugin implements Plugin<Project> {
             addDependency(it, MAPSTRUCT);
             addDependency(it, MAPSTRUCT_PROCESSOR);
             addOptionalDependencies(it);
-            addCompilerArguments(it);
+            addCompilerArgs(it);
         });
     }
 
-    protected void addDependency(Project project, PluginDependency pluginDependency) {
+    private void addDependency(Project project, PluginDependency pluginDependency) {
         project.getDependencies().add(pluginDependency.getConfiguration(), pluginDependency.getId());
     }
 
-    protected void addOptionalDependencies(Project project) {
+    private void addOptionalDependencies(Project project) {
         boolean hasLombok = false;
         boolean hasBinding = false;
         boolean hasSpring = false;
 
         for (Configuration configuration : project.getConfigurations()) {
             for (Dependency dependency : configuration.getAllDependencies()) {
-                if (isLombok(dependency)) {
+                if (!hasLombok && isLombok(dependency)) {
                     hasLombok = true;
-                } else if (isBinding(dependency)) {
+                } else if (!hasBinding && isBinding(dependency)) {
                     hasBinding = true;
-                } else if (isSpring(dependency)) {
+                } else if (!hasSpring && isSpring(dependency)) {
                     hasSpring = true;
                 }
             }
@@ -66,21 +66,21 @@ public class MapstructPlugin implements Plugin<Project> {
         }
     }
 
-    protected boolean isLombok(Dependency dependency) {
+    private boolean isLombok(Dependency dependency) {
         return LOMBOK.getGroup().equals(dependency.getGroup())
                 && LOMBOK.getName().equals(dependency.getName());
     }
 
-    protected boolean isBinding(Dependency dependency) {
+    private boolean isBinding(Dependency dependency) {
         return LOMBOK_MAPSTRUCT_BINDING.getGroup().equals(dependency.getGroup())
                 && LOMBOK_MAPSTRUCT_BINDING.getName().equals(dependency.getName());
     }
 
-    protected boolean isSpring(Dependency dependency) {
+    private boolean isSpring(Dependency dependency) {
         return "org.springframework".equals(dependency.getGroup());
     }
 
-    protected void addCompilerArguments(Project project) {
+    private void addCompilerArgs(Project project) {
         MapstructExtension extension = project.getExtensions().getByType(MapstructExtension.class);
 
         UnaryOperator<String> fetchCompilerArg = name -> {
@@ -88,15 +88,14 @@ public class MapstructPlugin implements Plugin<Project> {
                 PropertyDescriptor descriptor = new PropertyDescriptor(name, MapstructExtension.class);
                 Object value = descriptor.getReadMethod().invoke(extension);
 
-                return String.format(ARGUMENT_PATTERN, name, value);
+                return String.format(COMPILER_ARG_PATTERN, name, value);
             } catch (IllegalAccessException | InvocationTargetException | IntrospectionException exception) {
                 String message = "Can't fetch compiler argument for " + name;
                 throw new IllegalStateException(message, exception);
             }
         };
 
-        List<String> compilerArgs = Arrays
-                .stream(MapstructExtension.class.getDeclaredFields())
+        List<String> compilerArgs = Arrays.stream(MapstructExtension.class.getDeclaredFields())
                 .filter(field -> !field.isSynthetic())
                 .map(Field::getName)
                 .map(fetchCompilerArg)

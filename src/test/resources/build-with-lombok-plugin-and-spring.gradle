@@ -1,9 +1,0 @@
-plugins {
-    id 'io.freefair.lombok' version '6.4.1'
-    id 'com.github.akazver.mapstruct'
-    id 'java'
-}
-
-dependencies {
-    implementation 'org.springframework:spring-context:5.3.17'
-}
