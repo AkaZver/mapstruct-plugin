@@ -14,7 +14,7 @@ Gradle plugin for easy [mapstruct](https://mapstruct.org/) setup
 Installation:
 ```groovy
 plugins {
-    id 'com.github.akazver.mapstruct' version '1.0.1'
+    id 'com.github.akazver.mapstruct' version '1.0.3'
 }
 ```
 
@@ -36,7 +36,9 @@ mapstruct {
     suppressGeneratorVersionInfoComment = true
     defaultComponentModel = 'spring'
     defaultInjectionStrategy = 'constructor'
-    unmappedTargetPolicy = 'INFO'
+    unmappedTargetPolicy = 'ERROR'
+    unmappedSourcePolicy = 'ERROR'
+    disableBuilders = true
 }
 ```
 

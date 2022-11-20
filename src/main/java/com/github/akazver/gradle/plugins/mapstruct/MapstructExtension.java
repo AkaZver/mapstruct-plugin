@@ -17,5 +17,7 @@ public class MapstructExtension {
     private String defaultComponentModel = "default";
     private String defaultInjectionStrategy = "field";
     private String unmappedTargetPolicy = "WARN";
+    private String unmappedSourcePolicy = "WARN";
+    private boolean disableBuilders = false;
 
 }

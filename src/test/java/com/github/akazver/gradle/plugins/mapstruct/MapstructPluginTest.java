@@ -166,7 +166,9 @@ class MapstructPluginTest {
                 "-Amapstruct.suppressGeneratorVersionInfoComment=false",
                 "-Amapstruct.defaultComponentModel=default",
                 "-Amapstruct.defaultInjectionStrategy=field",
-                "-Amapstruct.unmappedTargetPolicy=WARN"
+                "-Amapstruct.unmappedTargetPolicy=WARN",
+                "-Amapstruct.unmappedSourcePolicy=WARN",
+                "-Amapstruct.disableBuilders=false"
         };
 
         assertThat(actualCompilerArgs).isEqualTo(expectedCompilerArgs);
