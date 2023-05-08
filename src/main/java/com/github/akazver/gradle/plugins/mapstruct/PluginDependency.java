@@ -17,7 +17,7 @@ public class PluginDependency {
             "annotationProcessor",
             "org.projectlombok",
             "lombok",
-            "1.18.24"
+            "1.18.26"
     );
 
     public static final PluginDependency LOMBOK_MAPSTRUCT_BINDING = new PluginDependency(
@@ -31,28 +31,28 @@ public class PluginDependency {
             "implementation",
             "org.mapstruct",
             "mapstruct",
-            "1.5.3.Final"
+            "1.5.5.Final"
     );
 
     public static final PluginDependency MAPSTRUCT_PROCESSOR = new PluginDependency(
             "annotationProcessor",
             "org.mapstruct",
             "mapstruct-processor",
-            "1.5.3.Final"
+            "1.5.5.Final"
     );
 
     public static final PluginDependency MAPSTRUCT_SPRING_EXTENSIONS = new PluginDependency(
             "annotationProcessor",
             "org.mapstruct.extensions.spring",
             "mapstruct-spring-extensions",
-            "0.1.2"
+            "1.0.1"
     );
 
     public static final PluginDependency MAPSTRUCT_SPRING_ANNOTATIONS = new PluginDependency(
             "implementation",
             "org.mapstruct.extensions.spring",
             "mapstruct-spring-annotations",
-            "0.1.2"
+            "1.0.1"
     );
 
     private final String configuration;
