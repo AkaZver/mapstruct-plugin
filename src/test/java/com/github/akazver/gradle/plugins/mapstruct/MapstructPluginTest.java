@@ -16,15 +16,23 @@ import org.gradle.testfixtures.ProjectBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static com.github.akazver.gradle.plugins.mapstruct.PluginDependency.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.*;
 
 /**
@@ -55,17 +63,33 @@ class MapstructPluginTest {
     void addDependency() {
         Project project = fetchProject();
 
-        assertThat(fetchDependencies(project, "annotationProcessor"))
+        assertThat(fetchDependencyIds(project, "annotationProcessor"))
                 .hasSize(1)
                 .first()
-                .extracting(this::fetchDependencyId)
                 .isEqualTo(MAPSTRUCT_PROCESSOR.getId());
 
-        assertThat(fetchDependencies(project, "implementation"))
+        assertThat(fetchDependencyIds(project, "implementation"))
                 .hasSize(1)
                 .first()
-                .extracting(this::fetchDependencyId)
                 .isEqualTo(MAPSTRUCT.getId());
+    }
+
+    private void baseOptionalDependenciesTest(Project project, String[] expectedAnnotationProcessor, String[] expectedImplementation) {
+        String[] expectedTestImplementation =
+                Stream.concat(Arrays.stream(expectedImplementation), Stream.of(MAPSTRUCT_SPRING_TEST_EXTENSIONS.getId()))
+                        .toArray(String[]::new);
+
+        assertThat(fetchDependencyIds(project, "annotationProcessor"))
+                .hasSize(expectedAnnotationProcessor.length)
+                .containsExactlyInAnyOrder(expectedAnnotationProcessor);
+
+        assertThat(fetchDependencyIds(project, "implementation"))
+                .hasSize(expectedImplementation.length)
+                .containsExactlyInAnyOrder(expectedImplementation);
+
+        assertThat(fetchDependencyIds(project, "testImplementation"))
+                .hasSize(expectedTestImplementation.length)
+                .containsExactlyInAnyOrder(expectedTestImplementation);
     }
 
     @Test
@@ -83,15 +107,7 @@ class MapstructPluginTest {
                 MAPSTRUCT_SPRING_ANNOTATIONS.getId()
         };
 
-        assertThat(fetchDependencies(project, "annotationProcessor"))
-                .hasSize(expectedAnnotationProcessor.length)
-                .extracting(this::fetchDependencyId)
-                .contains(expectedAnnotationProcessor);
-
-        assertThat(fetchDependencies(project, "implementation"))
-                .hasSize(expectedImplementation.length)
-                .extracting(this::fetchDependencyId)
-                .contains(expectedImplementation);
+        baseOptionalDependenciesTest(project, expectedAnnotationProcessor, expectedImplementation);
     }
 
     @Test
@@ -109,15 +125,7 @@ class MapstructPluginTest {
                 MAPSTRUCT_SPRING_ANNOTATIONS.getId()
         };
 
-        assertThat(fetchDependencies(project, "annotationProcessor"))
-                .hasSize(expectedAnnotationProcessor.length)
-                .extracting(this::fetchDependencyId)
-                .contains(expectedAnnotationProcessor);
-
-        assertThat(fetchDependencies(project, "implementation"))
-                .hasSize(expectedImplementation.length)
-                .extracting(this::fetchDependencyId)
-                .contains(expectedImplementation);
+        baseOptionalDependenciesTest(project, expectedAnnotationProcessor, expectedImplementation);
     }
 
     @Test
@@ -135,15 +143,7 @@ class MapstructPluginTest {
                 MAPSTRUCT_SPRING_ANNOTATIONS.getId()
         };
 
-        assertThat(fetchDependencies(project, "annotationProcessor"))
-                .hasSize(expectedAnnotationProcessor.length)
-                .extracting(this::fetchDependencyId)
-                .contains(expectedAnnotationProcessor);
-
-        assertThat(fetchDependencies(project, "implementation"))
-                .hasSize(expectedImplementation.length)
-                .extracting(this::fetchDependencyId)
-                .contains(expectedImplementation);
+        baseOptionalDependenciesTest(project, expectedAnnotationProcessor, expectedImplementation);
     }
 
     @Test
@@ -172,15 +172,13 @@ class MapstructPluginTest {
                 .extracting(this::fetchDependencyId)
                 .isEqualTo(LOMBOK.getId());
 
-        assertThat(fetchDependencies(project, "annotationProcessor"))
+        assertThat(fetchDependencyIds(project, "annotationProcessor"))
                 .hasSize(expectedAnnotationProcessor.length)
-                .extracting(this::fetchDependencyId)
-                .contains(expectedAnnotationProcessor);
+                .containsExactlyInAnyOrder(expectedAnnotationProcessor);
 
-        assertThat(fetchDependencies(project, "implementation"))
+        assertThat(fetchDependencyIds(project, "implementation"))
                 .hasSize(1)
-                .extracting(this::fetchDependencyId)
-                .contains(MAPSTRUCT.getId());
+                .containsExactlyInAnyOrder(MAPSTRUCT.getId());
     }
 
     @Test
@@ -231,7 +229,7 @@ class MapstructPluginTest {
                 .extracting(Throwable::getCause)
                 .isInstanceOf(IllegalStateException.class)
                 .extracting(Throwable::getMessage)
-                .isEqualTo("Can't fetch compiler argument for verbose");
+                .isEqualTo("Can't fetch compiler argument for 'verbose'");
     }
 
     @Test
@@ -239,7 +237,42 @@ class MapstructPluginTest {
     void incorrectPluginDependency() {
         assertThatThrownBy(() -> new PluginDependency("implementation", "broken"))
                 .isInstanceOf(IllegalStateException.class)
-                .hasMessage("Dependency id is invalid: broken");
+                .hasMessage("Dependency id 'broken' is invalid");
+    }
+
+    @ParameterizedTest
+    @DisplayName("Is Spring dependency")
+    @MethodSource("fetchSpringDependencies")
+    void isSpringDependency(PluginDependency pluginDependency, boolean hasSpringDependencies) {
+        Project project = fetchBaseProject();
+        DependencyHandler projectDependencies = project.getDependencies();
+        projectDependencies.add(pluginDependency.getConfiguration(), pluginDependency.getId());
+        evaluate(project);
+
+        assertSoftly(softly ->
+                SPRING_DEPENDENCIES.forEach(dependency -> {
+                            List<String> dependencyIds = fetchDependencyIds(project, dependency.getConfiguration());
+
+                            softly.assertThat(dependencyIds.contains(dependency.getId()))
+                                    .isEqualTo(hasSpringDependencies);
+                        }
+                )
+        );
+    }
+
+    private static Stream<Arguments> fetchSpringDependencies() {
+        Function<String, PluginDependency> fetchDependency = id ->
+                new PluginDependency("implementation", id);
+
+        PluginDependency springCore = fetchDependency.apply("org.springframework:lib:1.0.0");
+        PluginDependency notSpringLibrary = fetchDependency.apply("org.winter:lib:1.0.0");
+        PluginDependency libraryWithNullGroup = fetchDependency.apply(":lib:1.0.0");
+
+        return Stream.of(
+                arguments(springCore, true),
+                arguments(notSpringLibrary, false),
+                arguments(libraryWithNullGroup, false)
+        );
     }
 
     private Project fetchProject() {
@@ -258,8 +291,7 @@ class MapstructPluginTest {
     }
 
     private Project fetchBaseProject() {
-        Project project = ProjectBuilder
-                .builder()
+        Project project = ProjectBuilder.builder()
                 .withProjectDir(tempDirectory)
                 .withName("test-project")
                 .build();
@@ -276,15 +308,15 @@ class MapstructPluginTest {
         return project;
     }
 
-    private List<Dependency> fetchDependencies(Project project, String name) {
+    private List<String> fetchDependencyIds(Project project, String name) {
         Iterable<Dependency> iterator = () ->
                 project.getConfigurations()
                         .getByName(name)
                         .getAllDependencies()
                         .iterator();
 
-        return StreamSupport
-                .stream(iterator.spliterator(), false)
+        return StreamSupport.stream(iterator.spliterator(), false)
+                .map(this::fetchDependencyId)
                 .collect(Collectors.toList());
     }
 

@@ -3,7 +3,10 @@ package com.github.akazver.gradle.plugins.mapstruct;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
+import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.artifacts.Dependency;
+import org.gradle.api.artifacts.dsl.DependencyHandler;
+import org.gradle.api.tasks.compile.CompileOptions;
 import org.gradle.api.tasks.compile.JavaCompile;
 
 import java.beans.IntrospectionException;
@@ -12,9 +15,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
-import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.github.akazver.gradle.plugins.mapstruct.PluginDependency.*;
 
@@ -30,23 +32,27 @@ public class MapstructPlugin implements Plugin<Project> {
         project.getExtensions().create("mapstruct", MapstructExtension.class);
 
         project.afterEvaluate(it -> {
-            addDependency(it, MAPSTRUCT);
-            addDependency(it, MAPSTRUCT_PROCESSOR);
+            addDependencies(it, MAPSTRUCT_DEPENDENCIES);
             addOptionalDependencies(it);
             addCompilerArgs(it);
         });
     }
 
-    private void addDependency(Project project, PluginDependency pluginDependency) {
-        project.getDependencies().add(pluginDependency.getConfiguration(), pluginDependency.getId());
+    private void addDependencies(Project project, List<PluginDependency> pluginDependencies) {
+        DependencyHandler projectDependencies = project.getDependencies();
+
+        pluginDependencies.forEach(pluginDependency ->
+                projectDependencies.add(pluginDependency.getConfiguration(), pluginDependency.getId()));
     }
 
+    @SuppressWarnings({"java:S2583", "java:S2589"})
     private void addOptionalDependencies(Project project) {
-        boolean hasLombok = Objects.nonNull(project.getConfigurations().findByName("lombok"));
+        ConfigurationContainer configurations = project.getConfigurations();
+        boolean hasLombok = configurations.findByName("lombok") != null;
         boolean hasBinding = false;
         boolean hasSpring = false;
 
-        for (Configuration configuration : project.getConfigurations()) {
+        for (Configuration configuration : configurations) {
             for (Dependency dependency : configuration.getAllDependencies()) {
                 if (!hasLombok && isLombok(dependency)) {
                     hasLombok = true;
@@ -59,12 +65,11 @@ public class MapstructPlugin implements Plugin<Project> {
         }
 
         if (hasLombok && !hasBinding) {
-            addDependency(project, LOMBOK_MAPSTRUCT_BINDING);
+            addDependencies(project, LOMBOK_DEPENDENCIES);
         }
 
         if (hasSpring) {
-            addDependency(project, MAPSTRUCT_SPRING_EXTENSIONS);
-            addDependency(project, MAPSTRUCT_SPRING_ANNOTATIONS);
+            addDependencies(project, SPRING_DEPENDENCIES);
         }
     }
 
@@ -79,36 +84,41 @@ public class MapstructPlugin implements Plugin<Project> {
     }
 
     private boolean isSpring(Dependency dependency) {
-        return "org.springframework".equals(dependency.getGroup());
+        String group = dependency.getGroup();
+        return group != null && group.startsWith("org.springframework");
     }
 
     private void addCompilerArgs(Project project) {
         MapstructExtension extension = project.getExtensions().getByType(MapstructExtension.class);
 
-        UnaryOperator<String> fetchCompilerArg = name -> {
-            try {
-                PropertyDescriptor descriptor = new PropertyDescriptor(name, MapstructExtension.class);
-                Object value = descriptor.getReadMethod().invoke(extension);
-
-                return String.format(COMPILER_ARG_PATTERN, name, value);
-            } catch (IllegalAccessException | InvocationTargetException | IntrospectionException exception) {
-                String message = "Can't fetch compiler argument for " + name;
-                throw new IllegalStateException(message, exception);
-            }
-        };
-
-        List<String> compilerArgs = Arrays.stream(MapstructExtension.class.getDeclaredFields())
-                .filter(field -> !field.isSynthetic())
-                .map(Field::getName)
-                .map(fetchCompilerArg)
-                .collect(Collectors.toList());
-
-        project.getTasks()
+        CompileOptions compileOptions = project.getTasks()
                 .withType(JavaCompile.class)
                 .getByName("compileJava")
-                .getOptions()
-                .getCompilerArgs()
-                .addAll(compilerArgs);
+                .getOptions();
+
+        Stream<String> projectCompilerArgs = compileOptions.getCompilerArgs().stream();
+
+        Stream<String> mapstructCompilerArgs = Arrays.stream(MapstructExtension.class.getDeclaredFields())
+                .filter(field -> !field.isSynthetic())
+                .map(Field::getName)
+                .map(name -> fetchCompilerArg(extension, name));
+
+        List<String> compilerArgs = Stream.concat(projectCompilerArgs, mapstructCompilerArgs)
+                .collect(Collectors.toList());
+
+        compileOptions.setCompilerArgs(compilerArgs);
+    }
+
+    private String fetchCompilerArg(MapstructExtension extension, String name) {
+        try {
+            PropertyDescriptor descriptor = new PropertyDescriptor(name, MapstructExtension.class);
+            Object value = descriptor.getReadMethod().invoke(extension);
+
+            return String.format(COMPILER_ARG_PATTERN, name, value);
+        } catch (IllegalAccessException | InvocationTargetException | IntrospectionException exception) {
+            String message = String.format("Can't fetch compiler argument for '%s'", name);
+            throw new IllegalStateException(message, exception);
+        }
     }
 
 }

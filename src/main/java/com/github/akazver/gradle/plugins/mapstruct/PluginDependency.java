@@ -4,6 +4,9 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Description for all plugin dependencies
  */
@@ -17,7 +20,7 @@ public class PluginDependency {
             "annotationProcessor",
             "org.projectlombok",
             "lombok",
-            "1.18.26"
+            "1.18.30"
     );
 
     public static final PluginDependency LOMBOK_MAPSTRUCT_BINDING = new PluginDependency(
@@ -45,15 +48,37 @@ public class PluginDependency {
             "annotationProcessor",
             "org.mapstruct.extensions.spring",
             "mapstruct-spring-extensions",
-            "1.0.1"
+            "1.1.1"
     );
 
     public static final PluginDependency MAPSTRUCT_SPRING_ANNOTATIONS = new PluginDependency(
             "implementation",
             "org.mapstruct.extensions.spring",
             "mapstruct-spring-annotations",
-            "1.0.1"
+            "1.1.1"
     );
+
+    public static final PluginDependency MAPSTRUCT_SPRING_TEST_EXTENSIONS = new PluginDependency(
+            "testImplementation",
+            "org.mapstruct.extensions.spring",
+            "mapstruct-spring-test-extensions",
+            "1.1.1"
+    );
+
+    protected static final List<PluginDependency> MAPSTRUCT_DEPENDENCIES = new ArrayList<>();
+    protected static final List<PluginDependency> LOMBOK_DEPENDENCIES = new ArrayList<>();
+    protected static final List<PluginDependency> SPRING_DEPENDENCIES = new ArrayList<>();
+
+    static {
+        MAPSTRUCT_DEPENDENCIES.add(MAPSTRUCT);
+        MAPSTRUCT_DEPENDENCIES.add(MAPSTRUCT_PROCESSOR);
+
+        LOMBOK_DEPENDENCIES.add(LOMBOK_MAPSTRUCT_BINDING);
+
+        SPRING_DEPENDENCIES.add(MAPSTRUCT_SPRING_EXTENSIONS);
+        SPRING_DEPENDENCIES.add(MAPSTRUCT_SPRING_ANNOTATIONS);
+        SPRING_DEPENDENCIES.add(MAPSTRUCT_SPRING_TEST_EXTENSIONS);
+    }
 
     private final String configuration;
     private final String group;
@@ -76,7 +101,8 @@ public class PluginDependency {
         String[] split = id.split(":");
 
         if (split.length != 3) {
-            throw new IllegalStateException("Dependency id is invalid: " + id);
+            String message = String.format("Dependency id '%s' is invalid", id);
+            throw new IllegalStateException(message);
         }
 
         this.group = split[0];
