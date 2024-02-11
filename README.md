@@ -1,4 +1,4 @@
-[![Actions Status](https://github.com/AkaZver/mapstruct-plugin/workflows/Main/badge.svg)](https://github.com/AkaZver/mapstruct-plugin/actions)
+[![Actions Status](https://github.com/AkaZver/mapstruct-plugin/workflows/Build/badge.svg)](https://github.com/AkaZver/mapstruct-plugin/actions)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=AkaZver_mapstruct-plugin&metric=alert_status)](https://sonarcloud.io/dashboard?id=AkaZver_mapstruct-plugin)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=AkaZver_mapstruct-plugin&metric=security_rating)](https://sonarcloud.io/dashboard?id=AkaZver_mapstruct-plugin)
 [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=AkaZver_mapstruct-plugin&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=AkaZver_mapstruct-plugin)
