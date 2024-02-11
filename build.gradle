@@ -1,14 +1,14 @@
 plugins {
-    id 'com.gradle.plugin-publish' version '1.2.0'
-    id 'io.freefair.lombok' version '6.6.3'
-    id 'org.sonarqube' version '4.0.0.2929'
+    id 'com.gradle.plugin-publish' version '1.2.1'
+    id 'io.freefair.lombok' version '8.4'
+    id 'org.sonarqube' version '4.4.1.3373'
     id 'java-gradle-plugin'
     id 'maven-publish'
     id 'jacoco'
 }
 
 group = 'com.github.akazver.mapstruct'
-version = '1.0.5'
+version = '1.0.6'
 
 pluginBundle {
     website = 'https://github.com/AkaZver'
@@ -20,8 +20,8 @@ gradlePlugin {
     plugins {
         mapstruct {
             id = 'com.github.akazver.mapstruct'
-            displayName = 'Mapstruct Plugin'
-            description = 'Automatic Mapstruct configuration'
+            displayName = 'MapStruct Plugin'
+            description = 'Automatic MapStruct configuration'
             implementationClass = 'com.github.akazver.gradle.plugins.mapstruct.MapstructPlugin'
         }
     }
@@ -33,12 +33,12 @@ repositories {
 }
 
 dependencies {
-    testImplementation 'io.freefair.gradle:lombok-plugin:6.6.3'
-    testImplementation 'org.assertj:assertj-core:3.24.2'
-    testImplementation 'org.mockito:mockito-core:5.3.1'
-    testImplementation 'org.mockito:mockito-junit-jupiter:5.3.1'
-    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.9.3'
-    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.9.3'
+    testImplementation 'io.freefair.gradle:lombok-plugin:8.4'
+    testImplementation 'org.assertj:assertj-core:3.25.3'
+    testImplementation 'org.mockito:mockito-core:5.10.0'
+    testImplementation 'org.mockito:mockito-junit-jupiter:5.10.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.10.2'
 }
 
 test {
@@ -66,4 +66,8 @@ sonarqube {
         property "sonar.organization", "aka-zver"
         property "sonar.host.url", "https://sonarcloud.io"
     }
+}
+
+javadoc {
+    options.addStringOption('Xdoclint:none', '-quiet')
 }
