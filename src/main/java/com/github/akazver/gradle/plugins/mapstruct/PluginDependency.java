@@ -9,6 +9,8 @@ import java.util.List;
 
 /**
  * Description for all plugin dependencies
+ *
+ * @author Vasiliy Sobolev
  */
 @Getter
 @ToString
@@ -65,6 +67,13 @@ public class PluginDependency {
             "1.1.1"
     );
 
+    public static final PluginDependency SPRING_CORE = new PluginDependency(
+            "implementation",
+            "org.springframework",
+            "spring-core",
+            "6.1.4"
+    );
+
     protected static final List<PluginDependency> MAPSTRUCT_DEPENDENCIES = new ArrayList<>();
     protected static final List<PluginDependency> LOMBOK_DEPENDENCIES = new ArrayList<>();
     protected static final List<PluginDependency> SPRING_DEPENDENCIES = new ArrayList<>();
@@ -102,7 +111,7 @@ public class PluginDependency {
 
         if (split.length != 3) {
             String message = String.format("Dependency id '%s' is invalid", id);
-            throw new IllegalStateException(message);
+            throw new MapstructPluginException(message);
         }
 
         this.group = split[0];

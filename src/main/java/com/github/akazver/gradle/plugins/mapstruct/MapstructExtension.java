@@ -6,6 +6,8 @@ import lombok.Setter;
 /**
  * Mapstruct plugin configuration class based on
  * <a href="https://mapstruct.org/documentation/stable/reference/html/#configuration-options">official site</a>
+ *
+ * @author Vasiliy Sobolev
  */
 @Getter
 @Setter
