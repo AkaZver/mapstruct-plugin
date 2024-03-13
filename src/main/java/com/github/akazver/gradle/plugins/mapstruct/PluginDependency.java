@@ -9,6 +9,8 @@ import java.util.List;
 
 /**
  * Description for all plugin dependencies
+ *
+ * @author Vasiliy Sobolev
  */
 @Getter
 @ToString
@@ -20,7 +22,7 @@ public class PluginDependency {
             "annotationProcessor",
             "org.projectlombok",
             "lombok",
-            "1.18.30"
+            "1.18.32"
     );
 
     public static final PluginDependency LOMBOK_MAPSTRUCT_BINDING = new PluginDependency(
@@ -34,14 +36,14 @@ public class PluginDependency {
             "implementation",
             "org.mapstruct",
             "mapstruct",
-            "1.5.5.Final"
+            "1.6.0"
     );
 
     public static final PluginDependency MAPSTRUCT_PROCESSOR = new PluginDependency(
             "annotationProcessor",
             "org.mapstruct",
             "mapstruct-processor",
-            "1.5.5.Final"
+            "1.6.0"
     );
 
     public static final PluginDependency MAPSTRUCT_SPRING_EXTENSIONS = new PluginDependency(
@@ -63,6 +65,13 @@ public class PluginDependency {
             "org.mapstruct.extensions.spring",
             "mapstruct-spring-test-extensions",
             "1.1.1"
+    );
+
+    public static final PluginDependency SPRING_CORE = new PluginDependency(
+            "implementation",
+            "org.springframework",
+            "spring-core",
+            "6.1.12"
     );
 
     protected static final List<PluginDependency> MAPSTRUCT_DEPENDENCIES = new ArrayList<>();
@@ -102,7 +111,7 @@ public class PluginDependency {
 
         if (split.length != 3) {
             String message = String.format("Dependency id '%s' is invalid", id);
-            throw new IllegalStateException(message);
+            throw new MapstructPluginException(message);
         }
 
         this.group = split[0];

@@ -6,6 +6,8 @@ import lombok.Setter;
 /**
  * Mapstruct plugin configuration class based on
  * <a href="https://mapstruct.org/documentation/stable/reference/html/#configuration-options">official site</a>
+ *
+ * @author Vasiliy Sobolev
  */
 @Getter
 @Setter
@@ -19,5 +21,7 @@ public class MapstructExtension {
     private String unmappedTargetPolicy = "WARN";
     private String unmappedSourcePolicy = "WARN";
     private boolean disableBuilders = false;
+    private String nullValueIterableMappingStrategy = "RETURN_NULL";
+    private String nullValueMapMappingStrategy = "RETURN_NULL";
 
 }
