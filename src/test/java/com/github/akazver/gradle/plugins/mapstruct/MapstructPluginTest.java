@@ -16,52 +16,35 @@ import org.gradle.testfixtures.ProjectBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static com.github.akazver.gradle.plugins.mapstruct.PluginDependency.*;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.junit.jupiter.params.provider.Arguments.arguments;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
  * Tests for {@link MapstructPlugin}
+ *
+ * @author Vasiliy Sobolev
  */
 class MapstructPluginTest {
-
-    private static final PluginDependency SOME_SPRING_LIBRARY =
-            new PluginDependency("implementation", "org.springframework:some-library:1.0.0");
-
-    private static final PluginDependency SOME_LOMBOK_LIBRARY =
-            new PluginDependency("annotationProcessor", "org.projectlombok:some-library:1.0.0");
 
     @TempDir
     private File tempDirectory;
 
     @Test
-    @DisplayName("Apply")
-    void apply() {
+    @DisplayName("Add required dependencies")
+    void addRequiredDependencies() {
         Project project = fetchProject();
 
         assertThat(project.getPlugins().hasPlugin("com.github.akazver.mapstruct")).isTrue();
         assertThat(project.getExtensions().findByName("mapstruct")).isNotNull();
-    }
-
-    @Test
-    @DisplayName("Add dependency")
-    void addDependency() {
-        Project project = fetchProject();
 
         assertThat(fetchDependencyIds(project, "annotationProcessor"))
                 .hasSize(1)
@@ -95,7 +78,7 @@ class MapstructPluginTest {
     @Test
     @DisplayName("Add optional dependencies without binding")
     void addOptionalDependenciesWithoutBinding() {
-        Project project = fetchProject(SOME_SPRING_LIBRARY, LOMBOK);
+        Project project = fetchProject(SPRING_CORE, LOMBOK);
 
         String[] expectedAnnotationProcessor = {
                 LOMBOK.getId(), LOMBOK_MAPSTRUCT_BINDING.getId(),
@@ -103,7 +86,7 @@ class MapstructPluginTest {
         };
 
         String[] expectedImplementation = {
-                SOME_SPRING_LIBRARY.getId(), MAPSTRUCT.getId(),
+                SPRING_CORE.getId(), MAPSTRUCT.getId(),
                 MAPSTRUCT_SPRING_ANNOTATIONS.getId()
         };
 
@@ -113,7 +96,7 @@ class MapstructPluginTest {
     @Test
     @DisplayName("Add optional dependencies with binding")
     void addOptionalDependenciesWithBinding() {
-        Project project = fetchProject(LOMBOK_MAPSTRUCT_BINDING, SOME_SPRING_LIBRARY, LOMBOK);
+        Project project = fetchProject(LOMBOK_MAPSTRUCT_BINDING, SPRING_CORE, LOMBOK);
 
         String[] expectedAnnotationProcessor = {
                 LOMBOK.getId(), LOMBOK_MAPSTRUCT_BINDING.getId(),
@@ -121,25 +104,7 @@ class MapstructPluginTest {
         };
 
         String[] expectedImplementation = {
-                SOME_SPRING_LIBRARY.getId(), MAPSTRUCT.getId(),
-                MAPSTRUCT_SPRING_ANNOTATIONS.getId()
-        };
-
-        baseOptionalDependenciesTest(project, expectedAnnotationProcessor, expectedImplementation);
-    }
-
-    @Test
-    @DisplayName("Add optional dependencies with incorrect binding")
-    void addOptionalDependenciesWithIncorrectBinding() {
-        Project project = fetchProject(SOME_LOMBOK_LIBRARY, SOME_SPRING_LIBRARY, LOMBOK);
-
-        String[] expectedAnnotationProcessor = {
-                LOMBOK.getId(), MAPSTRUCT_PROCESSOR.getId(), LOMBOK_MAPSTRUCT_BINDING.getId(),
-                MAPSTRUCT_SPRING_EXTENSIONS.getId(), SOME_LOMBOK_LIBRARY.getId()
-        };
-
-        String[] expectedImplementation = {
-                SOME_SPRING_LIBRARY.getId(), MAPSTRUCT.getId(),
+                SPRING_CORE.getId(), MAPSTRUCT.getId(),
                 MAPSTRUCT_SPRING_ANNOTATIONS.getId()
         };
 
@@ -182,17 +147,39 @@ class MapstructPluginTest {
     }
 
     @Test
-    @DisplayName("Add compiler arguments success")
-    void addCompilerArgumentsSuccess() {
-        Project project = fetchProject();
+    @DisplayName("Add optional dependencies with Spring Boot plugin")
+    void addOptionalDependenciesWithSpringBootPlugin() {
+        Project project = fetchBaseProject();
+        project.getConfigurations().create("bootArchives");
+        project.getDependencies().add(SPRING_CORE.getConfiguration(), SPRING_CORE.getId());
+        evaluate(project);
 
-        String[] actualCompilerArgs = project
-                .getTasks()
+        String[] expectedAnnotationProcessor = {
+                MAPSTRUCT_PROCESSOR.getId(),
+                MAPSTRUCT_SPRING_EXTENSIONS.getId()
+        };
+
+        String[] expectedImplementation = {
+                SPRING_CORE.getId(), MAPSTRUCT.getId(),
+                MAPSTRUCT_SPRING_ANNOTATIONS.getId()
+        };
+
+        baseOptionalDependenciesTest(project, expectedAnnotationProcessor, expectedImplementation);
+    }
+
+    private String[] fetchActualCompilerArgs(Project project) {
+        return project.getTasks()
                 .withType(JavaCompile.class)
                 .getByName("compileJava")
                 .getOptions()
                 .getCompilerArgs()
                 .toArray(new String[0]);
+    }
+
+    @Test
+    @DisplayName("Add compiler arguments with default values success")
+    void addCompilerArgumentsWithDefaultValuesSuccess() {
+        Project project = fetchProject();
 
         String[] expectedCompilerArgs = {
                 "-Amapstruct.suppressGeneratorTimestamp=false",
@@ -202,10 +189,49 @@ class MapstructPluginTest {
                 "-Amapstruct.defaultInjectionStrategy=field",
                 "-Amapstruct.unmappedTargetPolicy=WARN",
                 "-Amapstruct.unmappedSourcePolicy=WARN",
-                "-Amapstruct.disableBuilders=false"
+                "-Amapstruct.disableBuilders=false",
+                "-Amapstruct.nullValueIterableMappingStrategy=RETURN_NULL",
+                "-Amapstruct.nullValueMapMappingStrategy=RETURN_NULL"
         };
 
-        assertThat(actualCompilerArgs).isEqualTo(expectedCompilerArgs);
+        assertThat(fetchActualCompilerArgs(project))
+                .isEqualTo(expectedCompilerArgs);
+    }
+
+    @Test
+    @DisplayName("Add compiler arguments with new values success")
+    void addCompilerArgumentsWithNewValuesSuccess() {
+        Project project = fetchBaseProject();
+        MapstructExtension extension = project.getExtensions().getByType(MapstructExtension.class);
+
+        extension.setSuppressGeneratorTimestamp(true);
+        extension.setVerbose(true);
+        extension.setSuppressGeneratorVersionInfoComment(true);
+        extension.setDefaultComponentModel("spring");
+        extension.setDefaultInjectionStrategy("constructor");
+        extension.setUnmappedTargetPolicy("ERROR");
+        extension.setUnmappedSourcePolicy("ERROR");
+        extension.setDisableBuilders(true);
+        extension.setNullValueIterableMappingStrategy("RETURN_DEFAULT");
+        extension.setNullValueMapMappingStrategy("RETURN_DEFAULT");
+
+        evaluate(project);
+
+        String[] expectedCompilerArgs = {
+                "-Amapstruct.suppressGeneratorTimestamp=true",
+                "-Amapstruct.verbose=true",
+                "-Amapstruct.suppressGeneratorVersionInfoComment=true",
+                "-Amapstruct.defaultComponentModel=spring",
+                "-Amapstruct.defaultInjectionStrategy=constructor",
+                "-Amapstruct.unmappedTargetPolicy=ERROR",
+                "-Amapstruct.unmappedSourcePolicy=ERROR",
+                "-Amapstruct.disableBuilders=true",
+                "-Amapstruct.nullValueIterableMappingStrategy=RETURN_DEFAULT",
+                "-Amapstruct.nullValueMapMappingStrategy=RETURN_DEFAULT"
+        };
+
+        assertThat(fetchActualCompilerArgs(project))
+                .isEqualTo(expectedCompilerArgs);
     }
 
     @Test
@@ -227,52 +253,24 @@ class MapstructPluginTest {
         assertThatThrownBy(() -> evaluate(project))
                 .isInstanceOf(ProjectConfigurationException.class)
                 .extracting(Throwable::getCause)
-                .isInstanceOf(IllegalStateException.class)
+                .isInstanceOf(MapstructPluginException.class)
                 .extracting(Throwable::getMessage)
                 .isEqualTo("Can't fetch compiler argument for 'verbose'");
+    }
+
+    @Test
+    @DisplayName("Correct plugin dependency")
+    void correctPluginDependency() {
+        assertThatCode(() -> new PluginDependency("implementation", "absolutely:not-broken:1.0.0"))
+                .doesNotThrowAnyException();
     }
 
     @Test
     @DisplayName("Incorrect plugin dependency")
     void incorrectPluginDependency() {
         assertThatThrownBy(() -> new PluginDependency("implementation", "broken"))
-                .isInstanceOf(IllegalStateException.class)
+                .isInstanceOf(MapstructPluginException.class)
                 .hasMessage("Dependency id 'broken' is invalid");
-    }
-
-    @ParameterizedTest
-    @DisplayName("Is Spring dependency")
-    @MethodSource("fetchSpringDependencies")
-    void isSpringDependency(PluginDependency pluginDependency, boolean hasSpringDependencies) {
-        Project project = fetchBaseProject();
-        DependencyHandler projectDependencies = project.getDependencies();
-        projectDependencies.add(pluginDependency.getConfiguration(), pluginDependency.getId());
-        evaluate(project);
-
-        assertSoftly(softly ->
-                SPRING_DEPENDENCIES.forEach(dependency -> {
-                            List<String> dependencyIds = fetchDependencyIds(project, dependency.getConfiguration());
-
-                            softly.assertThat(dependencyIds.contains(dependency.getId()))
-                                    .isEqualTo(hasSpringDependencies);
-                        }
-                )
-        );
-    }
-
-    private static Stream<Arguments> fetchSpringDependencies() {
-        Function<String, PluginDependency> fetchDependency = id ->
-                new PluginDependency("implementation", id);
-
-        PluginDependency springCore = fetchDependency.apply("org.springframework:lib:1.0.0");
-        PluginDependency notSpringLibrary = fetchDependency.apply("org.winter:lib:1.0.0");
-        PluginDependency libraryWithNullGroup = fetchDependency.apply(":lib:1.0.0");
-
-        return Stream.of(
-                arguments(springCore, true),
-                arguments(notSpringLibrary, false),
-                arguments(libraryWithNullGroup, false)
-        );
     }
 
     private Project fetchProject() {

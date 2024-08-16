@@ -14,22 +14,22 @@ Gradle plugin for easy [MapStruct](https://mapstruct.org/) setup
 Usage:
 ```groovy
 plugins {
-    id 'com.github.akazver.mapstruct' version '1.0.6'
+    id 'com.github.akazver.mapstruct' version '1.0.7'
 }
 ```
 
 ## Dependencies
-**MapStruct** _(required)_
-- [org.mapstruct:mapstruct](https://mvnrepository.com/artifact/org.mapstruct/mapstruct) _(implementation)_
-- [org.mapstruct:mapstruct-processor](https://mvnrepository.com/artifact/org.mapstruct/mapstruct-processor) _(annotationProcessor)_
+**MapStruct** (required)
+- [mapstruct](https://mvnrepository.com/artifact/org.mapstruct/mapstruct) (implementation)
+- [mapstruct-processor](https://mvnrepository.com/artifact/org.mapstruct/mapstruct-processor) (annotationProcessor)
 
-**Lombok** _(optional)_
-- [org.projectlombok:lombok-mapstruct-binding](https://mvnrepository.com/artifact/org.projectlombok/lombok-mapstruct-binding) _(annotationProcessor)_
+**Lombok** (optional)
+- [lombok-mapstruct-binding](https://mvnrepository.com/artifact/org.projectlombok/lombok-mapstruct-binding) (annotationProcessor)
 
-**Spring** _(optional)_
-- [org.mapstruct.extensions.spring:mapstruct-spring-annotations](https://mvnrepository.com/artifact/org.mapstruct.extensions.spring/mapstruct-spring-annotations) _(implementation)_
-- [org.mapstruct.extensions.spring:mapstruct-spring-extensions](https://mvnrepository.com/artifact/org.mapstruct.extensions.spring/mapstruct-spring-extensions) _(annotationProcessor)_
-- [org.mapstruct.extensions.spring:mapstruct-spring-test-extensions](https://mvnrepository.com/artifact/org.mapstruct.extensions.spring/mapstruct-spring-test-extensions) _(testImplementation)_
+**Spring** (optional)
+- [mapstruct-spring-annotations](https://mvnrepository.com/artifact/org.mapstruct.extensions.spring/mapstruct-spring-annotations) (implementation)
+- [mapstruct-spring-extensions](https://mvnrepository.com/artifact/org.mapstruct.extensions.spring/mapstruct-spring-extensions) (annotationProcessor)
+- [mapstruct-spring-test-extensions](https://mvnrepository.com/artifact/org.mapstruct.extensions.spring/mapstruct-spring-test-extensions) (testImplementation)
 
 ## Config
 Plugin adds configuration block which looks like this:
@@ -43,6 +43,8 @@ mapstruct {
     unmappedTargetPolicy = 'ERROR'
     unmappedSourcePolicy = 'ERROR'
     disableBuilders = true
+    nullValueIterableMappingStrategy = 'RETURN_DEFAULT'
+    nullValueMapMappingStrategy = 'RETURN_DEFAULT'
 }
 ```
 
