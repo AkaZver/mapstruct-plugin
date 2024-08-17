@@ -14,7 +14,7 @@ Gradle plugin for easy [MapStruct](https://mapstruct.org/) setup
 Usage:
 ```groovy
 plugins {
-    id 'com.github.akazver.mapstruct' version '1.0.7'
+    id 'com.github.akazver.mapstruct' version '1.0.8'
 }
 ```
 
@@ -30,6 +30,11 @@ plugins {
 - [mapstruct-spring-annotations](https://mvnrepository.com/artifact/org.mapstruct.extensions.spring/mapstruct-spring-annotations) (implementation)
 - [mapstruct-spring-extensions](https://mvnrepository.com/artifact/org.mapstruct.extensions.spring/mapstruct-spring-extensions) (annotationProcessor)
 - [mapstruct-spring-test-extensions](https://mvnrepository.com/artifact/org.mapstruct.extensions.spring/mapstruct-spring-test-extensions) (testImplementation)
+
+**Camel** (optional)
+- [camel-mapstruct](https://mvnrepository.com/artifact/org.apache.camel/camel-mapstruct) (implementation)
+- [camel-mapstruct-starter](https://mvnrepository.com/artifact/org.apache.camel.springboot/camel-mapstruct-starter) (implementation)
+- [camel-quarkus-mapstruct](https://mvnrepository.com/artifact/org.apache.camel.quarkus/camel-quarkus-mapstruct) (implementation)
 
 ## Config
 Plugin adds configuration block which looks like this:
