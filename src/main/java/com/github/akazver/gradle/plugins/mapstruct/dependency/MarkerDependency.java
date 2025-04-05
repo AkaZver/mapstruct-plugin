@@ -15,20 +15,25 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 public class MarkerDependency extends PluginDependency {
 
+    // https://mvnrepository.com/artifact/org.projectlombok/lombok
     public static final MarkerDependency LOMBOK =
-            new MarkerDependency("annotationProcessor", "org.projectlombok:lombok:1.18.32");
+            new MarkerDependency("annotationProcessor", "org.projectlombok:lombok:1.18.36");
 
+    // https://mvnrepository.com/artifact/org.springframework/spring-core
     public static final MarkerDependency SPRING_CORE =
-            new MarkerDependency("implementation", "org.springframework:spring-core:6.1.12");
+            new MarkerDependency("implementation", "org.springframework:spring-core:6.2.5");
 
+    // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot
     public static final MarkerDependency SPRING_BOOT =
-            new MarkerDependency("implementation", "org.springframework.boot:spring-boot:3.3.2");
+            new MarkerDependency("implementation", "org.springframework.boot:spring-boot:3.4.4");
 
+    // https://mvnrepository.com/artifact/org.apache.camel/camel-core
     public static final MarkerDependency CAMEL_CORE =
-            new MarkerDependency("implementation", "org.apache.camel:camel-core:4.7.0");
+            new MarkerDependency("implementation", "org.apache.camel:camel-core:4.11.0");
 
+    // https://mvnrepository.com/artifact/io.quarkus/quarkus-core
     public static final MarkerDependency QUARKUS_CORE =
-            new MarkerDependency("implementation", "io.quarkus:quarkus-core:3.13.2");
+            new MarkerDependency("implementation", "io.quarkus:quarkus-core:3.21.1");
 
     public MarkerDependency(String configuration, String id) {
         super(configuration, id);

@@ -20,8 +20,13 @@ import static com.github.akazver.gradle.plugins.mapstruct.dependency.MarkerDepen
 public class DependencyManager {
 
     private static final Logger LOGGER = Logging.getLogger(DependencyManager.class);
+
     private static final String ADDING_MESSAGE = "Adding {} dependencies";
     private static final String DEPENDENCY_PREFIX = "- {}";
+
+    private static final String LOMBOK_CONFIG_NAME = "lombok";
+    private static final String SPRING_BOOT_CONFIG_NAME = "bootArchives";
+    private static final String QUARKUS_EXT_NAME = "quarkus";
 
     private final ConfigurationContainer configurations;
     private final ExtensionContainer extensions;
@@ -39,56 +44,29 @@ public class DependencyManager {
     }
 
     public void addOptionalDependencies() {
-        addLombokBinding();
-        addSpringExtensions();
-        addCamelExtensions();
-    }
+        boolean hasLombok = hasConfiguration(LOMBOK_CONFIG_NAME) || hasDependency(LOMBOK);
+        boolean hasBinding = hasDependency(LOMBOK_MAPSTRUCT_BINDING);
+        boolean hasSpringBoot = hasConfiguration(SPRING_BOOT_CONFIG_NAME) || hasDependency(SPRING_BOOT);
+        boolean hasSpring = hasDependency(SPRING_CORE);
+        boolean hasCamel = hasDependency(CAMEL_CORE);
+        boolean hasQuarkus = hasExtension(QUARKUS_EXT_NAME) || hasDependency(QUARKUS_CORE);
 
-    private boolean hasLombok() {
-        return hasConfiguration("lombok") || hasDependency(LOMBOK);
-    }
-
-    private boolean hasBinding() {
-        return hasDependency(LOMBOK_MAPSTRUCT_BINDING);
-    }
-
-    private void addLombokBinding() {
-        if (hasLombok() && !hasBinding()) {
+        if (hasLombok && !hasBinding) {
             LOGGER.lifecycle(ADDING_MESSAGE, "Lombok");
             addDependency(LOMBOK_MAPSTRUCT_BINDING);
         }
-    }
 
-    private boolean hasSpringBoot() {
-        return hasConfiguration("bootArchives") || hasDependency(SPRING_BOOT);
-    }
-
-    private boolean hasSpring() {
-        return hasDependency(SPRING_CORE);
-    }
-
-    private void addSpringExtensions() {
-        if (hasSpringBoot() || hasSpring()) {
+        if (hasSpringBoot || hasSpring) {
             LOGGER.lifecycle(ADDING_MESSAGE, "Spring");
             addDependencies(MAPSTRUCT_SPRING_EXTENSIONS, MAPSTRUCT_SPRING_ANNOTATIONS, MAPSTRUCT_SPRING_TEST_EXTENSIONS);
         }
-    }
 
-    private boolean hasCamel() {
-        return hasDependency(CAMEL_CORE);
-    }
-
-    private boolean hasQuarkus() {
-        return hasExtension("quarkus") || hasDependency(QUARKUS_CORE);
-    }
-
-    private void addCamelExtensions() {
-        if (hasCamel()) {
+        if (hasCamel) {
             LOGGER.lifecycle(ADDING_MESSAGE, "Camel");
 
-            if (hasSpringBoot()) {
+            if (hasSpringBoot) {
                 addDependency(CAMEL_MAPSTRUCT_STARTER);
-            } else if (hasQuarkus()) {
+            } else if (hasQuarkus) {
                 addDependency(CAMEL_QUARKUS_MAPSTRUCT);
             } else {
                 addDependency(CAMEL_MAPSTRUCT);
