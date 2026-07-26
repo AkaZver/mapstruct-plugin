@@ -8,6 +8,7 @@ import org.gradle.api.artifacts.dsl.DependencyHandler;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.logging.Logging;
 import org.gradle.api.plugins.ExtensionContainer;
+import org.gradle.api.plugins.PluginManager;
 
 import static io.github.akazver.gradle.plugins.mapstruct.dependency.AdditionalDependency.*;
 import static io.github.akazver.gradle.plugins.mapstruct.dependency.MarkerDependency.*;
@@ -27,19 +28,34 @@ public class DependencyManager {
     private final ConfigurationContainer configurations;
     private final ExtensionContainer extensions;
     private final DependencyHandler dependencies;
+    private final PluginManager pluginManager;
 
     public DependencyManager(Project project) {
         this.configurations = project.getConfigurations();
         this.extensions = project.getExtensions();
         this.dependencies = project.getDependencies();
+        this.pluginManager = project.getPluginManager();
     }
 
-    public void addRequiredDependencies() {
+    public void addDependencies() {
+        boolean hasKotlin = hasExtension("kotlin");
+        String processorConfig = hasKotlin ? "kapt" : "annotationProcessor";
+
+        if (hasKotlin) {
+            pluginManager.apply("org.jetbrains.kotlin.kapt");
+        }
+
+        addRequiredDependencies(processorConfig);
+        addOptionalDependencies(processorConfig);
+    }
+
+    private void addRequiredDependencies(String processorConfig) {
         LOGGER.lifecycle(ADDING_MESSAGE, "MapStruct");
-        addDependencies(MAPSTRUCT, MAPSTRUCT_PROCESSOR);
+        addDependency(MAPSTRUCT);
+        addDependency(MAPSTRUCT_PROCESSOR, processorConfig);
     }
 
-    public void addOptionalDependencies() {
+    private void addOptionalDependencies(String processorConfig) {
         boolean hasLombok = hasExtension("lombok") || hasDependency(LOMBOK);
         boolean hasBinding = hasDependency(LOMBOK_MAPSTRUCT_BINDING);
         boolean hasSpringBoot = hasExtension("springBoot") || hasDependency(SPRING_BOOT);
@@ -50,12 +66,14 @@ public class DependencyManager {
 
         if (hasLombok && !hasBinding) {
             LOGGER.lifecycle(ADDING_MESSAGE, "Lombok");
-            addDependency(LOMBOK_MAPSTRUCT_BINDING);
+            addDependency(LOMBOK_MAPSTRUCT_BINDING, processorConfig);
         }
 
         if (hasSpringBoot || hasSpring) {
             LOGGER.lifecycle(ADDING_MESSAGE, "Spring");
-            addDependencies(MAPSTRUCT_SPRING_EXTENSIONS, MAPSTRUCT_SPRING_ANNOTATIONS, MAPSTRUCT_SPRING_TEST_EXTENSIONS);
+            addDependency(MAPSTRUCT_SPRING_EXTENSIONS, processorConfig);
+            addDependency(MAPSTRUCT_SPRING_ANNOTATIONS);
+            addDependency(MAPSTRUCT_SPRING_TEST_EXTENSIONS);
         }
 
         if (hasCamel) {
@@ -97,15 +115,13 @@ public class DependencyManager {
         return extensions.findByName(extensionName) != null;
     }
 
-    private void addDependency(PluginDependency pluginDependency) {
+    private void addDependency(PluginDependency pluginDependency, String configuration) {
         LOGGER.lifecycle(DEPENDENCY_PREFIX, pluginDependency.getId());
-        dependencies.add(pluginDependency.getConfiguration(), pluginDependency.getId());
+        dependencies.add(configuration, pluginDependency.getId());
     }
 
-    private void addDependencies(PluginDependency... pluginDependencies) {
-        for (PluginDependency pluginDependency : pluginDependencies) {
-            addDependency(pluginDependency);
-        }
+    private void addDependency(PluginDependency pluginDependency) {
+        addDependency(pluginDependency, pluginDependency.getConfiguration());
     }
 
 }

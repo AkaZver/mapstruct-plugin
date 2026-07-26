@@ -7,6 +7,7 @@ import io.quarkus.gradle.QuarkusPlugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.artifacts.DependencySet;
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.gradle.plugin.SpringBootPlugin;
@@ -301,6 +302,63 @@ class DependencyTest extends BaseTest {
         };
 
         optionalDependenciesWithoutSpringTest(project, expectedAnnotationProcessor, expectedImplementation);
+    }
+
+    @Test
+    @DisplayName("Add dependencies with Kotlin plugin")
+    void addDependenciesWithKotlinPlugin() {
+        Project project = fetchBaseProject();
+        project.getPluginManager().apply(KotlinPluginWrapper.class);
+        evaluate(project);
+
+        assertThat(project.getPlugins().findPlugin("org.jetbrains.kotlin.jvm")).isNotNull();
+        assertThat(project.getPlugins().findPlugin("org.jetbrains.kotlin.kapt")).isNotNull();
+
+        assertThat(fetchDependencyIds(project, "kapt"))
+                .hasSize(1)
+                .first()
+                .isEqualTo(MAPSTRUCT_PROCESSOR.getId());
+
+        assertThat(fetchDependencyIds(project, "implementation"))
+                .hasSize(1)
+                .first()
+                .isEqualTo(MAPSTRUCT.getId());
+
+        assertThat(fetchDependencyIds(project, "annotationProcessor"))
+                .isEmpty();
+    }
+
+    @Test
+    @DisplayName("Add dependencies with Kotlin plugin and Spring")
+    void addDependenciesWithKotlinPluginAndSpring() {
+        Project project = fetchBaseProject();
+        project.getPluginManager().apply(KotlinPluginWrapper.class);
+        project.getDependencies().add(SPRING_CORE.getConfiguration(), SPRING_CORE.getId());
+        evaluate(project);
+
+        assertThat(project.getPlugins().findPlugin("org.jetbrains.kotlin.jvm")).isNotNull();
+        assertThat(project.getPlugins().findPlugin("org.jetbrains.kotlin.kapt")).isNotNull();
+
+        String[] expectedKapt = {
+                MAPSTRUCT_PROCESSOR.getId(),
+                MAPSTRUCT_SPRING_EXTENSIONS.getId()
+        };
+
+        String[] expectedImplementation = {
+                SPRING_CORE.getId(), MAPSTRUCT.getId(),
+                MAPSTRUCT_SPRING_ANNOTATIONS.getId()
+        };
+
+        assertThat(fetchDependencyIds(project, "kapt"))
+                .hasSize(expectedKapt.length)
+                .containsExactlyInAnyOrder(expectedKapt);
+
+        assertThat(fetchDependencyIds(project, "implementation"))
+                .hasSize(expectedImplementation.length)
+                .containsExactlyInAnyOrder(expectedImplementation);
+
+        assertThat(fetchDependencyIds(project, "annotationProcessor"))
+                .isEmpty();
     }
 
     private void optionalDependenciesTest(Project project, String[] expectedAnnotationProcessor, String[] expectedImplementation) {
