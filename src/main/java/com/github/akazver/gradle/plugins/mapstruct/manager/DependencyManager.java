@@ -24,10 +24,6 @@ public class DependencyManager {
     private static final String ADDING_MESSAGE = "Adding {} dependencies";
     private static final String DEPENDENCY_PREFIX = "- {}";
 
-    private static final String LOMBOK_CONFIG_NAME = "lombok";
-    private static final String SPRING_BOOT_CONFIG_NAME = "bootArchives";
-    private static final String QUARKUS_EXT_NAME = "quarkus";
-
     private final ConfigurationContainer configurations;
     private final ExtensionContainer extensions;
     private final DependencyHandler dependencies;
@@ -44,12 +40,13 @@ public class DependencyManager {
     }
 
     public void addOptionalDependencies() {
-        boolean hasLombok = hasConfiguration(LOMBOK_CONFIG_NAME) || hasDependency(LOMBOK);
+        boolean hasLombok = hasExtension("lombok") || hasDependency(LOMBOK);
         boolean hasBinding = hasDependency(LOMBOK_MAPSTRUCT_BINDING);
-        boolean hasSpringBoot = hasConfiguration(SPRING_BOOT_CONFIG_NAME) || hasDependency(SPRING_BOOT);
+        boolean hasSpringBoot = hasExtension("springBoot") || hasDependency(SPRING_BOOT);
         boolean hasSpring = hasDependency(SPRING_CORE);
         boolean hasCamel = hasDependency(CAMEL_CORE);
-        boolean hasQuarkus = hasExtension(QUARKUS_EXT_NAME) || hasDependency(QUARKUS_CORE);
+        boolean hasQuarkus = hasExtension("quarkus") || hasDependency(QUARKUS_CORE);
+        boolean hasProtobuf = hasExtension("protobuf") || hasDependency(PROTOBUF_JAVA);
 
         if (hasLombok && !hasBinding) {
             LOGGER.lifecycle(ADDING_MESSAGE, "Lombok");
@@ -72,6 +69,16 @@ public class DependencyManager {
                 addDependency(CAMEL_MAPSTRUCT);
             }
         }
+
+        if (hasQuarkus) {
+            LOGGER.lifecycle(ADDING_MESSAGE, "Quarkus");
+            addDependency(QUARKUS_MAPSTRUCT);
+        }
+
+        if (hasProtobuf) {
+            LOGGER.lifecycle(ADDING_MESSAGE, "Protobuf");
+            addDependency(PROTOBUF_SPI_IMPL);
+        }
     }
 
     private boolean isNeededDependency(Dependency dependency, PluginDependency pluginDependency) {
@@ -86,11 +93,6 @@ public class DependencyManager {
                 .anyMatch(dependency -> isNeededDependency(dependency, pluginDependency));
     }
 
-    private boolean hasConfiguration(String configurationName) {
-        return configurations.findByName(configurationName) != null;
-    }
-
-    @SuppressWarnings("SameParameterValue")
     private boolean hasExtension(String extensionName) {
         return extensions.findByName(extensionName) != null;
     }

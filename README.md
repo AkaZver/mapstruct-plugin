@@ -1,5 +1,6 @@
 <p align="center">
   <a href="https://github.com/AkaZver/mapstruct-plugin/actions"><img src="https://github.com/AkaZver/mapstruct-plugin/workflows/Build/badge.svg" alt="Actions Status"></a>
+  <a href="#"><img src="https://img.shields.io/gradle-plugin-portal/v/com.github.akazver.mapstruct?label=Plugin Version&logo=github" alt="Plugin Version"></a>
   <a href="https://sonarcloud.io"><img src="https://sonarcloud.io/api/project_badges/measure?project=AkaZver_mapstruct-plugin&metric=alert_status" alt="Quality Gate Status"></a>
   <a href="https://sonarcloud.io"><img src="https://sonarcloud.io/api/project_badges/measure?project=AkaZver_mapstruct-plugin&metric=coverage" alt="Coverage"></a>
   <br/>
@@ -18,33 +19,49 @@
 
 Gradle plugin for easy [MapStruct](https://mapstruct.org/) setup
 
-Usage:
+## Requirements
+
+- **Gradle:** 9.0 or higher
+- **Java:** 17 or higher
+
+## Usage
+
 ```groovy
 plugins {
-    id 'com.github.akazver.mapstruct' version '2.0.0'
+    id 'com.github.akazver.mapstruct' version 'X.Y.Z'
 }
 ```
 
+## How it works
+
+The plugin automatically:
+
+- Adds MapStruct dependencies (`mapstruct` and `mapstruct-processor`)
+- Detects optional dependencies (Lombok, Spring, Camel, Quarkus, Protobuf) in your project
+- Adds required binding libraries when needed (e.g., `lombok-mapstruct-binding` for Lombok)
+- Configures compiler arguments based on your `mapstruct {}` block settings
+- Runs after project evaluation to ensure all dependencies are resolved
+
 ## Dependencies
-**MapStruct** (required)
-- [mapstruct](https://mvnrepository.com/artifact/org.mapstruct/mapstruct) (implementation)
-- [mapstruct-processor](https://mvnrepository.com/artifact/org.mapstruct/mapstruct-processor) (annotationProcessor)
 
-**Lombok** (optional)
-- [lombok-mapstruct-binding](https://mvnrepository.com/artifact/org.projectlombok/lombok-mapstruct-binding) (annotationProcessor)
-
-**Spring** (optional)
-- [mapstruct-spring-annotations](https://mvnrepository.com/artifact/org.mapstruct.extensions.spring/mapstruct-spring-annotations) (implementation)
-- [mapstruct-spring-extensions](https://mvnrepository.com/artifact/org.mapstruct.extensions.spring/mapstruct-spring-extensions) (annotationProcessor)
-- [mapstruct-spring-test-extensions](https://mvnrepository.com/artifact/org.mapstruct.extensions.spring/mapstruct-spring-test-extensions) (testImplementation)
-
-**Camel** (optional)
-- [camel-mapstruct](https://mvnrepository.com/artifact/org.apache.camel/camel-mapstruct) (implementation)
-- [camel-mapstruct-starter](https://mvnrepository.com/artifact/org.apache.camel.springboot/camel-mapstruct-starter) (implementation)
-- [camel-quarkus-mapstruct](https://mvnrepository.com/artifact/org.apache.camel.quarkus/camel-quarkus-mapstruct) (implementation)
+| Category                   | GitHub                                                                                            | Maven                                                                                                                                                                   | Configuration         |
+|----------------------------|---------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------|
+| **MapStruct** *(required)* | [mapstruct/mapstruct](https://github.com/mapstruct/mapstruct)                                     | [org.mapstruct/mapstruct](https://mvnrepository.com/artifact/org.mapstruct/mapstruct)                                                                                   | `implementation`      |
+|                            |                                                                                                   | [org.mapstruct/mapstruct-processor](https://mvnrepository.com/artifact/org.mapstruct/mapstruct-processor)                                                               | `annotationProcessor` |
+| **Lombok**                 | [projectlombok/lombok](https://github.com/projectlombok/lombok)                                   | [org.projectlombok/lombok-mapstruct-binding](https://mvnrepository.com/artifact/org.projectlombok/lombok-mapstruct-binding)                                             | `annotationProcessor` |
+| **Spring**                 | [mapstruct/mapstruct-spring-extensions](https://github.com/mapstruct/mapstruct-spring-extensions) | [org.mapstruct.extensions.spring/mapstruct-spring-annotations](https://mvnrepository.com/artifact/org.mapstruct.extensions.spring/mapstruct-spring-annotations)         | `implementation`      |
+|                            |                                                                                                   | [org.mapstruct.extensions.spring/mapstruct-spring-extensions](https://mvnrepository.com/artifact/org.mapstruct.extensions.spring/mapstruct-spring-extensions)           | `annotationProcessor` |
+|                            |                                                                                                   | [org.mapstruct.extensions.spring/mapstruct-spring-test-extensions](https://mvnrepository.com/artifact/org.mapstruct.extensions.spring/mapstruct-spring-test-extensions) | `testImplementation`  |
+| **Camel**                  | [apache/camel](https://github.com/apache/camel)                                                   | [org.apache.camel/camel-mapstruct](https://mvnrepository.com/artifact/org.apache.camel/camel-mapstruct)                                                                 | `implementation`      |
+|                            | [apache/camel-spring-boot](https://github.com/apache/camel-spring-boot)                           | [org.apache.camel.springboot/camel-mapstruct-starter](https://mvnrepository.com/artifact/org.apache.camel.springboot/camel-mapstruct-starter)                           | `implementation`      |
+|                            | [apache/camel-quarkus](https://github.com/apache/camel-quarkus)                                   | [org.apache.camel.quarkus/camel-quarkus-mapstruct](https://mvnrepository.com/artifact/org.apache.camel.quarkus/camel-quarkus-mapstruct)                                 | `implementation`      |
+| **Quarkus**                | [quarkiverse/quarkus-mapstruct](https://github.com/quarkiverse/quarkus-mapstruct)                 | [io.quarkiverse.mapstruct/quarkus-mapstruct](https://mvnrepository.com/artifact/io.quarkiverse.mapstruct/quarkus-mapstruct)                                             | `implementation`      |
+| **Protobuf**               | [entur/mapstruct-spi-protobuf](https://github.com/entur/mapstruct-spi-protobuf)                   | [no.entur.mapstruct.spi/protobuf-spi-impl](https://mvnrepository.com/artifact/no.entur.mapstruct.spi/protobuf-spi-impl)                                                 | `implementation`      |
 
 ## Config
+
 Plugin adds configuration block which looks like this:
+
 ```groovy
 mapstruct {
     suppressGeneratorTimestamp = true
@@ -60,8 +77,30 @@ mapstruct {
 }
 ```
 
-All parameters used according to official 
+All parameters used according to official
 [documentation](https://mapstruct.org/documentation/stable/reference/html/#configuration-options)
 
+## Troubleshooting
+
+### MapStruct not generating mappers
+
+Make sure you have the Java plugin applied and that annotation processing is enabled in your IDE.
+
+### Lombok + MapStruct conflicts
+
+The plugin automatically adds `lombok-mapstruct-binding` when Lombok is detected. If you still have issues, ensure
+Lombok plugin is applied before MapStruct plugin.
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
 ## License
+
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FAkaZver%2Fmapstruct-plugin.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FAkaZver%2Fmapstruct-plugin?ref=badge_large)

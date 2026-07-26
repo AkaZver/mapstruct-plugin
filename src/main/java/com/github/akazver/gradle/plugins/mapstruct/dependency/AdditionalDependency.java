@@ -51,6 +51,14 @@ public class AdditionalDependency extends PluginDependency {
     public static final AdditionalDependency CAMEL_QUARKUS_MAPSTRUCT =
             new AdditionalDependency("implementation", "org.apache.camel.quarkus:camel-quarkus-mapstruct:3.36.0");
 
+    // https://mvnrepository.com/artifact/io.quarkiverse.mapstruct/quarkus-mapstruct
+    public static final AdditionalDependency QUARKUS_MAPSTRUCT =
+            new AdditionalDependency("implementation", "io.quarkiverse.mapstruct:quarkus-mapstruct:1.1.0");
+
+    // https://mvnrepository.com/artifact/no.entur.mapstruct.spi/protobuf-spi-impl
+    public static final AdditionalDependency PROTOBUF_SPI_IMPL =
+            new AdditionalDependency("implementation", "no.entur.mapstruct.spi:protobuf-spi-impl:1.62.0");
+
     public AdditionalDependency(String configuration, String id) {
         super(configuration, id);
     }

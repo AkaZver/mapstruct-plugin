@@ -35,6 +35,10 @@ public class MarkerDependency extends PluginDependency {
     public static final MarkerDependency QUARKUS_CORE =
             new MarkerDependency("implementation", "io.quarkus:quarkus-core:3.38.0");
 
+    // https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java
+    public static final MarkerDependency PROTOBUF_JAVA =
+            new MarkerDependency("implementation", "com.google.protobuf:protobuf-java:4.35.1");
+
     public MarkerDependency(String configuration, String id) {
         super(configuration, id);
     }

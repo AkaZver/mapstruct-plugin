@@ -28,10 +28,19 @@ gradlePlugin {
 repositories {
     mavenLocal()
     mavenCentral()
+    gradlePluginPortal()
 }
 
 dependencies {
+    // id 'io.freefair.lombok' version '9.5.0'
     testImplementation 'io.freefair.gradle:lombok-plugin:9.5.0'
+    // id 'io.quarkus' version '3.38.0'
+    testImplementation 'io.quarkus:io.quarkus.gradle.plugin:3.38.0'
+    // id 'org.springframework.boot' version '4.1.0'
+    testImplementation 'org.springframework.boot:org.springframework.boot.gradle.plugin:4.1.0'
+    // id 'com.google.protobuf' version '0.10.0'
+    testImplementation 'com.google.protobuf:com.google.protobuf.gradle.plugin:0.10.0'
+
     testImplementation 'org.assertj:assertj-core:3.27.7'
     testImplementation 'org.junit.jupiter:junit-jupiter:6.1.2'
     testImplementation 'org.junit.platform:junit-platform-launcher:6.1.2'
@@ -42,6 +51,12 @@ dependencies {
 test {
     useJUnitPlatform()
     finalizedBy jacocoTestReport
+    maxParallelForks = 1
+}
+
+configurations.testImplementation {
+    exclude group: 'org.slf4j'
+    exclude group: 'org.jboss.slf4j'
 }
 
 java {

@@ -53,10 +53,9 @@ public class CompilerArgsManager {
             PropertyDescriptor descriptor = new PropertyDescriptor(name, MapstructExtension.class);
             Object value = descriptor.getReadMethod().invoke(extension);
 
-            return String.format(COMPILER_ARG_PATTERN, name, value);
+            return COMPILER_ARG_PATTERN.formatted(name, value);
         } catch (IllegalAccessException | InvocationTargetException | IntrospectionException exception) {
-            String message = String.format("Can't fetch compiler argument for '%s'", name);
-            throw new MapstructPluginException(message, exception);
+            throw new MapstructPluginException("Can't fetch compiler argument for '%s'".formatted(name), exception);
         }
     }
 
