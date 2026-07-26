@@ -13,7 +13,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -22,6 +21,7 @@ import java.util.stream.Stream;
  * @author Vasiliy Sobolev
  */
 @RequiredArgsConstructor
+@SuppressWarnings("ClassCanBeRecord")
 public class CompilerArgsManager {
 
     private static final String COMPILER_ARG_PATTERN = "-Amapstruct.%s=%s";
@@ -43,8 +43,7 @@ public class CompilerArgsManager {
                 .map(Field::getName)
                 .map(name -> fetchCompilerArg(extension, name));
 
-        List<String> compilerArgs = Stream.concat(projectCompilerArgs, mapstructCompilerArgs)
-                .collect(Collectors.toList());
+        List<String> compilerArgs = Stream.concat(projectCompilerArgs, mapstructCompilerArgs).toList();
 
         compileOptions.setCompilerArgs(compilerArgs);
     }

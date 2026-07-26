@@ -28,3 +28,7 @@ target/
 /dist/
 /nbdist/
 /.nb-gradle/
+
+### JVM ###
+hs_err_pid*.log
+replay_pid*.log

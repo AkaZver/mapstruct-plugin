@@ -1,11 +1,18 @@
-[![Actions Status](https://github.com/AkaZver/mapstruct-plugin/workflows/Build/badge.svg)](https://github.com/AkaZver/mapstruct-plugin/actions)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=AkaZver_mapstruct-plugin&metric=alert_status)](https://sonarcloud.io/dashboard?id=AkaZver_mapstruct-plugin)
-[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=AkaZver_mapstruct-plugin&metric=security_rating)](https://sonarcloud.io/dashboard?id=AkaZver_mapstruct-plugin)
-[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=AkaZver_mapstruct-plugin&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=AkaZver_mapstruct-plugin)
-[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=AkaZver_mapstruct-plugin&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=AkaZver_mapstruct-plugin)
-[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=AkaZver_mapstruct-plugin&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=AkaZver_mapstruct-plugin)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=AkaZver_mapstruct-plugin&metric=coverage)](https://sonarcloud.io/dashboard?id=AkaZver_mapstruct-plugin)
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FAkaZver%2Fmapstruct-plugin.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FAkaZver%2Fmapstruct-plugin?ref=badge_shield)
+<p align="center">
+  <a href="https://github.com/AkaZver/mapstruct-plugin/actions"><img src="https://github.com/AkaZver/mapstruct-plugin/workflows/Build/badge.svg" alt="Actions Status"></a>
+  <a href="https://sonarcloud.io"><img src="https://sonarcloud.io/api/project_badges/measure?project=AkaZver_mapstruct-plugin&metric=alert_status" alt="Quality Gate Status"></a>
+  <a href="https://sonarcloud.io"><img src="https://sonarcloud.io/api/project_badges/measure?project=AkaZver_mapstruct-plugin&metric=coverage" alt="Coverage"></a>
+  <br/>
+  <a href="https://sonarcloud.io"><img src="https://sonarcloud.io/api/project_badges/measure?project=AkaZver_mapstruct-plugin&metric=security_rating" alt="Security Rating"></a>
+  <a href="https://sonarcloud.io"><img src="https://sonarcloud.io/api/project_badges/measure?project=AkaZver_mapstruct-plugin&metric=reliability_rating" alt="Reliability Rating"></a>
+  <a href="https://sonarcloud.io"><img src="https://sonarcloud.io/api/project_badges/measure?project=AkaZver_mapstruct-plugin&metric=sqale_rating" alt="Maintainability Rating"></a>
+  <a href="https://sonarcloud.io"><img src="https://sonarcloud.io/api/project_badges/measure?project=AkaZver_mapstruct-plugin&metric=vulnerabilities" alt="Vulnerabilities"></a>
+  <br/>
+  <a href="#"><img src="https://img.shields.io/badge/Java-17-blue.svg?logo=intellijidea" alt="Java"></a>
+  <a href="#"><img src="https://img.shields.io/badge/Gradle-9.6.1-blue.svg?logo=gradle" alt="Gradle"></a>
+  <a href="#"><img src="https://img.shields.io/badge/License-Apache--2.0-blue.svg?logo=apache" alt="License"></a>
+  <a href="https://app.fossa.com/projects/git%2Bgithub.com%2FAkaZver%2Fmapstruct-plugin?ref=badge_shield"><img src="https://app.fossa.com/api/projects/git%2Bgithub.com%2FAkaZver%2Fmapstruct-plugin.svg?type=shield" alt="FOSSA Status"></a>
+</p>
 
 # MapStruct Gradle Plugin
 
@@ -14,7 +21,7 @@ Gradle plugin for easy [MapStruct](https://mapstruct.org/) setup
 Usage:
 ```groovy
 plugins {
-    id 'com.github.akazver.mapstruct' version '1.0.9'
+    id 'com.github.akazver.mapstruct' version '2.0.0'
 }
 ```
 
