@@ -28,8 +28,7 @@ public class PluginDependency {
         String[] split = id.split(":");
 
         if (split.length != 3) {
-            String message = String.format("Dependency id '%s' is invalid", id);
-            throw new MapstructPluginException(message);
+            throw new MapstructPluginException("Dependency id '%s' is invalid".formatted(id));
         }
 
         this.group = split[0];
