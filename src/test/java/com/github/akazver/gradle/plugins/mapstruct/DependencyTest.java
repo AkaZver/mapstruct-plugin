@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -283,7 +282,7 @@ class DependencyTest extends BaseTest {
 
         return StreamSupport.stream(iterator.spliterator(), false)
                 .map(this::fetchDependencyId)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private String fetchDependencyId(Dependency dependency) {

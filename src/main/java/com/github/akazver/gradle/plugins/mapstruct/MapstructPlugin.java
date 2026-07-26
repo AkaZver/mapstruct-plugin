@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Vasiliy Sobolev
  */
-public class MapstructPlugin implements Plugin<Project> {
+public class MapstructPlugin implements Plugin<@NotNull Project> {
 
     @Override
     public void apply(@NotNull Project project) {
