@@ -57,7 +57,7 @@ The plugin automatically:
 |                            | [apache/camel-spring-boot](https://github.com/apache/camel-spring-boot)                           | [org.apache.camel.springboot/camel-mapstruct-starter](https://mvnrepository.com/artifact/org.apache.camel.springboot/camel-mapstruct-starter)                           | `implementation`      |
 |                            | [apache/camel-quarkus](https://github.com/apache/camel-quarkus)                                   | [org.apache.camel.quarkus/camel-quarkus-mapstruct](https://mvnrepository.com/artifact/org.apache.camel.quarkus/camel-quarkus-mapstruct)                                 | `implementation`      |
 | **Quarkus**                | [quarkiverse/quarkus-mapstruct](https://github.com/quarkiverse/quarkus-mapstruct)                 | [io.quarkiverse.mapstruct/quarkus-mapstruct](https://mvnrepository.com/artifact/io.quarkiverse.mapstruct/quarkus-mapstruct)                                             | `implementation`      |
-| **Protobuf**               | [entur/mapstruct-spi-protobuf](https://github.com/entur/mapstruct-spi-protobuf)                   | [no.entur.mapstruct.spi/protobuf-spi-impl](https://mvnrepository.com/artifact/no.entur.mapstruct.spi/protobuf-spi-impl)                                                 | `implementation`      |
+| **Protobuf**               | [entur/mapstruct-spi-protobuf](https://github.com/entur/mapstruct-spi-protobuf)                   | [no.entur.mapstruct.spi/protobuf-spi-impl](https://mvnrepository.com/artifact/no.entur.mapstruct.spi/protobuf-spi-impl)                                                 | `annotationProcessor` |
 
 ## Config
 

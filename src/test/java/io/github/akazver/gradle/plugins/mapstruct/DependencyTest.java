@@ -271,11 +271,11 @@ class DependencyTest extends BaseTest {
         evaluate(project);
 
         String[] expectedAnnotationProcessor = {
-                MAPSTRUCT_PROCESSOR.getId()
+                MAPSTRUCT_PROCESSOR.getId(), PROTOBUF_SPI_IMPL.getId()
         };
 
         String[] expectedImplementation = {
-                MAPSTRUCT.getId(), PROTOBUF_JAVA.getId(), PROTOBUF_SPI_IMPL.getId()
+                MAPSTRUCT.getId(), PROTOBUF_JAVA.getId()
         };
 
         optionalDependenciesWithoutSpringTest(project, expectedAnnotationProcessor, expectedImplementation);
@@ -294,11 +294,11 @@ class DependencyTest extends BaseTest {
         assertThat(project.getConfigurations().findByName("protobuf")).isNotNull();
 
         String[] expectedAnnotationProcessor = {
-                MAPSTRUCT_PROCESSOR.getId()
+                MAPSTRUCT_PROCESSOR.getId(), PROTOBUF_SPI_IMPL.getId()
         };
 
         String[] expectedImplementation = {
-                MAPSTRUCT.getId(), PROTOBUF_JAVA.getId(), PROTOBUF_SPI_IMPL.getId()
+                MAPSTRUCT.getId(), PROTOBUF_JAVA.getId()
         };
 
         optionalDependenciesWithoutSpringTest(project, expectedAnnotationProcessor, expectedImplementation);

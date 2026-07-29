@@ -57,7 +57,7 @@ public class AdditionalDependency extends PluginDependency {
 
     // https://mvnrepository.com/artifact/no.entur.mapstruct.spi/protobuf-spi-impl
     public static final AdditionalDependency PROTOBUF_SPI_IMPL =
-            new AdditionalDependency("implementation", "no.entur.mapstruct.spi:protobuf-spi-impl:1.62.0");
+            new AdditionalDependency("annotationProcessor", "no.entur.mapstruct.spi:protobuf-spi-impl:1.62.0");
 
     public AdditionalDependency(String configuration, String id) {
         super(configuration, id);
