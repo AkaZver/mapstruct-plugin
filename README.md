@@ -1,13 +1,13 @@
 <p align="center">
   <a href="https://github.com/AkaZver/mapstruct-plugin/actions"><img src="https://github.com/AkaZver/mapstruct-plugin/workflows/Build/badge.svg" alt="Actions Status"></a>
-  <a href="#"><img src="https://img.shields.io/maven-metadata/v.svg?metadataUrl=https%3A%2F%2Fplugins.gradle.org%2Fm2%2Fio%2Fgithub%2Fakazver%2Fmapstruct%2Fio.github.akazver.mapstruct.gradle.plugin%2Fmaven-metadata.xml&label=Plugin%20Version&logo=github" alt="Plugin Version"></a>
-  <a href="https://sonarcloud.io"><img src="https://sonarcloud.io/api/project_badges/measure?project=AkaZver_mapstruct-plugin&metric=alert_status" alt="Quality Gate Status"></a>
-  <a href="https://sonarcloud.io"><img src="https://sonarcloud.io/api/project_badges/measure?project=AkaZver_mapstruct-plugin&metric=coverage" alt="Coverage"></a>
+  <a href="https://plugins.gradle.org/plugin/io.github.akazver.mapstruct"><img src="https://img.shields.io/maven-metadata/v.svg?metadataUrl=https%3A%2F%2Fplugins.gradle.org%2Fm2%2Fio%2Fgithub%2Fakazver%2Fmapstruct%2Fio.github.akazver.mapstruct.gradle.plugin%2Fmaven-metadata.xml&label=Plugin%20Version&logo=github" alt="Plugin Version"></a>
+  <a href="https://sonarcloud.io/project/overview?id=AkaZver_mapstruct-plugin"><img src="https://sonarcloud.io/api/project_badges/measure?project=AkaZver_mapstruct-plugin&metric=alert_status" alt="Quality Gate Status"></a>
+  <a href="https://sonarcloud.io/project/overview?id=AkaZver_mapstruct-plugin"><img src="https://sonarcloud.io/api/project_badges/measure?project=AkaZver_mapstruct-plugin&metric=coverage" alt="Coverage"></a>
   <br/>
-  <a href="https://sonarcloud.io"><img src="https://sonarcloud.io/api/project_badges/measure?project=AkaZver_mapstruct-plugin&metric=security_rating" alt="Security Rating"></a>
-  <a href="https://sonarcloud.io"><img src="https://sonarcloud.io/api/project_badges/measure?project=AkaZver_mapstruct-plugin&metric=reliability_rating" alt="Reliability Rating"></a>
-  <a href="https://sonarcloud.io"><img src="https://sonarcloud.io/api/project_badges/measure?project=AkaZver_mapstruct-plugin&metric=sqale_rating" alt="Maintainability Rating"></a>
-  <a href="https://sonarcloud.io"><img src="https://sonarcloud.io/api/project_badges/measure?project=AkaZver_mapstruct-plugin&metric=vulnerabilities" alt="Vulnerabilities"></a>
+  <a href="https://sonarcloud.io/project/overview?id=AkaZver_mapstruct-plugin"><img src="https://sonarcloud.io/api/project_badges/measure?project=AkaZver_mapstruct-plugin&metric=security_rating" alt="Security Rating"></a>
+  <a href="https://sonarcloud.io/project/overview?id=AkaZver_mapstruct-plugin"><img src="https://sonarcloud.io/api/project_badges/measure?project=AkaZver_mapstruct-plugin&metric=reliability_rating" alt="Reliability Rating"></a>
+  <a href="https://sonarcloud.io/project/overview?id=AkaZver_mapstruct-plugin"><img src="https://sonarcloud.io/api/project_badges/measure?project=AkaZver_mapstruct-plugin&metric=sqale_rating" alt="Maintainability Rating"></a>
+  <a href="https://sonarcloud.io/project/overview?id=AkaZver_mapstruct-plugin"><img src="https://sonarcloud.io/api/project_badges/measure?project=AkaZver_mapstruct-plugin&metric=vulnerabilities" alt="Vulnerabilities"></a>
   <br/>
   <a href="#"><img src="https://img.shields.io/badge/Java-17-blue.svg?logo=intellijidea" alt="Java"></a>
   <a href="#"><img src="https://img.shields.io/badge/Gradle-9.6.1-blue.svg?logo=gradle" alt="Gradle"></a>
@@ -39,6 +39,7 @@ The plugin automatically:
 - Adds MapStruct dependencies (`mapstruct` and `mapstruct-processor`)
 - Detects optional dependencies (Lombok, Spring, Camel, Quarkus, Protobuf) in your project
 - Adds required binding libraries when needed (e.g., `lombok-mapstruct-binding` for Lombok)
+- Detects Kotlin and automatically applies `kapt` plugin with proper configuration
 - Configures compiler arguments based on your `mapstruct {}` block settings
 - Runs after project evaluation to ensure all dependencies are resolved
 

@@ -1,8 +1,8 @@
 plugins {
+    id 'com.vanniktech.maven.publish' version '0.37.0'
     id 'com.gradle.plugin-publish' version '2.1.1'
     id 'io.freefair.lombok' version '9.5.0'
     id 'org.sonarqube' version '7.3.1.8318'
-    id 'com.vanniktech.maven.publish' version '0.37.0'
     id 'java-gradle-plugin'
     id 'jacoco'
 }
@@ -40,6 +40,8 @@ dependencies {
     testImplementation 'org.springframework.boot:org.springframework.boot.gradle.plugin:4.1.0'
     // id 'com.google.protobuf' version '0.10.0'
     testImplementation 'com.google.protobuf:com.google.protobuf.gradle.plugin:0.10.0'
+    // id 'org.jetbrains.kotlin.jvm' version '2.0.21'
+    testImplementation 'org.jetbrains.kotlin:kotlin-gradle-plugin:2.0.21'
 
     testImplementation 'org.assertj:assertj-core:3.27.7'
     testImplementation 'org.junit.jupiter:junit-jupiter:6.1.2'

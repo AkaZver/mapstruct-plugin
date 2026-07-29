@@ -21,8 +21,7 @@ public class MapstructPlugin implements Plugin<@NotNull Project> {
         project.getExtensions().create("mapstruct", MapstructExtension.class);
 
         project.afterEvaluate(it -> {
-            dependencyManager.addRequiredDependencies();
-            dependencyManager.addOptionalDependencies();
+            dependencyManager.addDependencies();
             compilerArgsManager.addCompilerArgs();
         });
     }
