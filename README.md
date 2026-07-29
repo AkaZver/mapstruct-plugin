@@ -32,10 +32,6 @@ plugins {
 }
 ```
 
-## Migration from older versions
-
-If you were using the old plugin ID `com.github.akazver.mapstruct`, you can continue using it for backward compatibility. However, we recommend migrating to the new ID `io.github.akazver.mapstruct`
-
 ## How it works
 
 The plugin automatically:
