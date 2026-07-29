@@ -1,6 +1,6 @@
-package com.github.akazver.gradle.plugins.mapstruct;
+package io.github.akazver.gradle.plugins.mapstruct;
 
-import com.github.akazver.gradle.plugins.mapstruct.dependency.PluginDependency;
+import io.github.akazver.gradle.plugins.mapstruct.dependency.PluginDependency;
 import com.google.protobuf.gradle.ProtobufPlugin;
 import io.freefair.gradle.plugins.lombok.LombokPlugin;
 import io.quarkus.gradle.QuarkusPlugin;
@@ -16,8 +16,8 @@ import java.util.List;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import static com.github.akazver.gradle.plugins.mapstruct.dependency.AdditionalDependency.*;
-import static com.github.akazver.gradle.plugins.mapstruct.dependency.MarkerDependency.*;
+import static io.github.akazver.gradle.plugins.mapstruct.dependency.AdditionalDependency.*;
+import static io.github.akazver.gradle.plugins.mapstruct.dependency.MarkerDependency.*;
 import static org.assertj.core.api.Assertions.*;
 
 /**
@@ -32,7 +32,7 @@ class DependencyTest extends BaseTest {
     void addRequiredDependencies() {
         Project project = fetchProject();
 
-        assertThat(project.getPlugins().findPlugin("com.github.akazver.mapstruct")).isNotNull();
+        assertThat(project.getPlugins().findPlugin("io.github.akazver.mapstruct")).isNotNull();
         assertThat(project.getExtensions().findByName("mapstruct")).isNotNull();
 
         assertThat(fetchDependencyIds(project, "annotationProcessor"))

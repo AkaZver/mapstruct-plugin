@@ -4,10 +4,11 @@ plugins {
     id 'org.sonarqube' version '7.3.1.8318'
     id 'java-gradle-plugin'
     id 'maven-publish'
+    id 'signing'
     id 'jacoco'
 }
 
-group = 'com.github.akazver.mapstruct'
+group = 'io.github.akazver'
 version = System.getenv("RELEASE_VERSION") ?: "dev"
 
 gradlePlugin {
@@ -16,11 +17,18 @@ gradlePlugin {
 
     plugins {
         mapstruct {
-            id = 'com.github.akazver.mapstruct'
+            id = 'io.github.akazver.mapstruct'
             displayName = 'MapStruct Plugin'
             description = 'Automatic MapStruct configuration'
-            implementationClass = 'com.github.akazver.gradle.plugins.mapstruct.MapstructPlugin'
-            tags.set(['mapstruct', 'mapping', 'lombok', 'spring', 'quarkus', 'camel'])
+            implementationClass = 'io.github.akazver.gradle.plugins.mapstruct.MapstructPlugin'
+            tags.set(['mapstruct', 'mapping', 'lombok', 'spring', 'quarkus', 'camel', 'protobuf'])
+        }
+        mapstructLegacy {
+            id = 'com.github.akazver.mapstruct'
+            displayName = 'MapStruct Plugin (Legacy)'
+            description = 'Automatic MapStruct configuration (legacy ID, use io.github.akazver.mapstruct instead)'
+            implementationClass = 'io.github.akazver.gradle.plugins.mapstruct.MapstructPlugin'
+            tags.set(['mapstruct', 'mapping', 'lombok', 'spring', 'quarkus', 'camel', 'protobuf'])
         }
     }
 }
@@ -52,6 +60,7 @@ test {
     useJUnitPlatform()
     finalizedBy jacocoTestReport
     maxParallelForks = 1
+    jvmArgs '-Xshare:off'
 }
 
 configurations.testImplementation {
@@ -63,6 +72,7 @@ java {
     sourceCompatibility = 17
     targetCompatibility = 17
     withSourcesJar()
+    withJavadocJar()
 }
 
 jacocoTestReport {
@@ -81,6 +91,57 @@ sonarqube {
         property "sonar.java.binaries", "build/classes/java/main"
         property "sonar.java.test.binaries", "build/classes/java/test"
     }
+}
+
+publishing {
+    publications {
+        pluginMaven(MavenPublication) {
+            pom {
+                name = 'MapStruct Plugin'
+                description = 'Automatic MapStruct configuration for Gradle'
+                url = 'https://github.com/AkaZver/mapstruct-plugin'
+
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id = 'akazver'
+                        name = 'Vasiliy Sobolev'
+                        email = 'aka.zver.007@gmail.com'
+                        url = 'https://github.com/AkaZver'
+                    }
+                }
+
+                scm {
+                    connection = 'scm:git:git://github.com/AkaZver/mapstruct-plugin.git'
+                    developerConnection = 'scm:git:ssh://github.com/AkaZver/mapstruct-plugin.git'
+                    url = 'https://github.com/AkaZver/mapstruct-plugin'
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            name = 'localRepo'
+            url = layout.buildDirectory.dir('local-repo')
+        }
+    }
+}
+
+signing {
+    def signingKey = System.getenv("SIGNING_KEY")
+    def signingPassword = System.getenv("SIGNING_PASSWORD")
+    required = signingKey != null && !version.toString().endsWith('SNAPSHOT')
+    if (signingKey != null) {
+        useInMemoryPgpKeys(signingKey, signingPassword)
+    }
+    sign publishing.publications.pluginMaven
 }
 
 javadoc {

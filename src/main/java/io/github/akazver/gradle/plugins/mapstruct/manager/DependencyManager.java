@@ -1,6 +1,6 @@
-package com.github.akazver.gradle.plugins.mapstruct.manager;
+package io.github.akazver.gradle.plugins.mapstruct.manager;
 
-import com.github.akazver.gradle.plugins.mapstruct.dependency.PluginDependency;
+import io.github.akazver.gradle.plugins.mapstruct.dependency.PluginDependency;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.artifacts.Dependency;
@@ -9,8 +9,8 @@ import org.gradle.api.logging.Logger;
 import org.gradle.api.logging.Logging;
 import org.gradle.api.plugins.ExtensionContainer;
 
-import static com.github.akazver.gradle.plugins.mapstruct.dependency.AdditionalDependency.*;
-import static com.github.akazver.gradle.plugins.mapstruct.dependency.MarkerDependency.*;
+import static io.github.akazver.gradle.plugins.mapstruct.dependency.AdditionalDependency.*;
+import static io.github.akazver.gradle.plugins.mapstruct.dependency.MarkerDependency.*;
 
 /**
  * Manages required and optional dependencies addition

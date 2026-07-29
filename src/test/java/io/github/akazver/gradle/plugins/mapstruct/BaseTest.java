@@ -1,6 +1,6 @@
-package com.github.akazver.gradle.plugins.mapstruct;
+package io.github.akazver.gradle.plugins.mapstruct;
 
-import com.github.akazver.gradle.plugins.mapstruct.dependency.PluginDependency;
+import io.github.akazver.gradle.plugins.mapstruct.dependency.PluginDependency;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.dsl.DependencyHandler;
 import org.gradle.api.internal.project.DefaultProject;

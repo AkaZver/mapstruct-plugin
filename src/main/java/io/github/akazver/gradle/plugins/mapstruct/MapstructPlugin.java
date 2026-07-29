@@ -1,7 +1,7 @@
-package com.github.akazver.gradle.plugins.mapstruct;
+package io.github.akazver.gradle.plugins.mapstruct;
 
-import com.github.akazver.gradle.plugins.mapstruct.manager.CompilerArgsManager;
-import com.github.akazver.gradle.plugins.mapstruct.manager.DependencyManager;
+import io.github.akazver.gradle.plugins.mapstruct.manager.CompilerArgsManager;
+import io.github.akazver.gradle.plugins.mapstruct.manager.DependencyManager;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.jetbrains.annotations.NotNull;

@@ -1,6 +1,6 @@
-package com.github.akazver.gradle.plugins.mapstruct.dependency;
+package io.github.akazver.gradle.plugins.mapstruct.dependency;
 
-import com.github.akazver.gradle.plugins.mapstruct.MapstructPluginException;
+import io.github.akazver.gradle.plugins.mapstruct.MapstructPluginException;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
