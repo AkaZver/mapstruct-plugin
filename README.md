@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://github.com/AkaZver/mapstruct-plugin/actions"><img src="https://github.com/AkaZver/mapstruct-plugin/workflows/Build/badge.svg" alt="Actions Status"></a>
-  <a href="#"><img src="https://img.shields.io/maven-metadata/v.svg?metadataUrl=https%3A%2F%2Fplugins.gradle.org%2Fm2%2Fcom%2Fgithub%2Fakazver%2Fmapstruct%2Fcom.github.akazver.mapstruct.gradle.plugin%2Fmaven-metadata.xml&label=Plugin%20Version&logo=github" alt="Plugin Version"></a>
+  <a href="#"><img src="https://img.shields.io/maven-metadata/v.svg?metadataUrl=https%3A%2F%2Fplugins.gradle.org%2Fm2%2Fio%2Fgithub%2Fakazver%2Fmapstruct%2Fio.github.akazver.mapstruct.gradle.plugin%2Fmaven-metadata.xml&label=Plugin%20Version&logo=github" alt="Plugin Version"></a>
   <a href="https://sonarcloud.io"><img src="https://sonarcloud.io/api/project_badges/measure?project=AkaZver_mapstruct-plugin&metric=alert_status" alt="Quality Gate Status"></a>
   <a href="https://sonarcloud.io"><img src="https://sonarcloud.io/api/project_badges/measure?project=AkaZver_mapstruct-plugin&metric=coverage" alt="Coverage"></a>
   <br/>
@@ -28,9 +28,13 @@ Gradle plugin for easy [MapStruct](https://mapstruct.org/) setup
 
 ```groovy
 plugins {
-    id 'com.github.akazver.mapstruct' version 'X.Y.Z'
+    id 'io.github.akazver.mapstruct' version 'X.Y.Z'
 }
 ```
+
+## Migration from older versions
+
+If you were using the old plugin ID `com.github.akazver.mapstruct`, you can continue using it for backward compatibility. However, we recommend migrating to the new ID `io.github.akazver.mapstruct`
 
 ## How it works
 

@@ -1,6 +1,6 @@
-package com.github.akazver.gradle.plugins.mapstruct;
+package io.github.akazver.gradle.plugins.mapstruct;
 
-import com.github.akazver.gradle.plugins.mapstruct.manager.CompilerArgsManager;
+import io.github.akazver.gradle.plugins.mapstruct.manager.CompilerArgsManager;
 import org.gradle.api.Project;
 import org.gradle.api.internal.plugins.ExtensionContainerInternal;
 import org.gradle.api.plugins.ExtensionContainer;

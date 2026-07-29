@@ -1,4 +1,4 @@
-package com.github.akazver.gradle.plugins.mapstruct.dependency;
+package io.github.akazver.gradle.plugins.mapstruct.dependency;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

@@ -1,7 +1,7 @@
-package com.github.akazver.gradle.plugins.mapstruct.manager;
+package io.github.akazver.gradle.plugins.mapstruct.manager;
 
-import com.github.akazver.gradle.plugins.mapstruct.MapstructExtension;
-import com.github.akazver.gradle.plugins.mapstruct.MapstructPluginException;
+import io.github.akazver.gradle.plugins.mapstruct.MapstructExtension;
+import io.github.akazver.gradle.plugins.mapstruct.MapstructPluginException;
 import lombok.RequiredArgsConstructor;
 import org.gradle.api.Project;
 import org.gradle.api.tasks.compile.CompileOptions;

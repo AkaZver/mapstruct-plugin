@@ -1,4 +1,4 @@
-package com.github.akazver.gradle.plugins.mapstruct;
+package io.github.akazver.gradle.plugins.mapstruct;
 
 /**
  * Custom runtime exception for the plugin

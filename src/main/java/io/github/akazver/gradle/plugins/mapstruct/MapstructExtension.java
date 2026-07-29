@@ -1,4 +1,4 @@
-package com.github.akazver.gradle.plugins.mapstruct;
+package io.github.akazver.gradle.plugins.mapstruct;
 
 import lombok.Getter;
 import lombok.Setter;
