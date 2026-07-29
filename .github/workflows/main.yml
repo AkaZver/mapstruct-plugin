@@ -188,14 +188,25 @@ jobs:
       - name: Create bundle
         run: |
           cd build/local-repo
+          find . -type f -name "*.asc" -o -name "*.jar" -o -name "*.pom" | sort
           zip -r ../central-bundle.zip .
+          cd ..
+          ls -lh central-bundle.zip
+
+      - name: Verify bundle structure
+        run: |
+          echo "Bundle contents:"
+          unzip -l build/central-bundle.zip
+          echo ""
+          echo "Bundle size:"
+          ls -lh build/central-bundle.zip
 
       - name: Upload to Central Portal
         env:
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_TOKEN_USERNAME }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_TOKEN_PASSWORD }}
         run: |
-          curl -X POST \
+          curl --fail -v -X POST \
             -H "Authorization: Bearer $(echo -n ${SONATYPE_USERNAME}:${SONATYPE_PASSWORD} | base64)" \
             -F "file=@build/central-bundle.zip" \
             -F "name=mapstruct-plugin-${{ github.ref_name }}" \
