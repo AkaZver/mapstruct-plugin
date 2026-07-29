@@ -2,9 +2,8 @@ plugins {
     id 'com.gradle.plugin-publish' version '2.1.1'
     id 'io.freefair.lombok' version '9.5.0'
     id 'org.sonarqube' version '7.3.1.8318'
+    id 'com.vanniktech.maven.publish' version '0.37.0'
     id 'java-gradle-plugin'
-    id 'maven-publish'
-    id 'signing'
     id 'jacoco'
 }
 
@@ -72,7 +71,6 @@ java {
     sourceCompatibility = 17
     targetCompatibility = 17
     withSourcesJar()
-    withJavadocJar()
 }
 
 jacocoTestReport {
@@ -93,55 +91,39 @@ sonarqube {
     }
 }
 
-publishing {
-    publications {
-        pluginMaven(MavenPublication) {
-            pom {
-                name = 'MapStruct Plugin'
-                description = 'Automatic MapStruct configuration for Gradle'
-                url = 'https://github.com/AkaZver/mapstruct-plugin'
+mavenPublishing {
+    publishToMavenCentral(true)
+    signAllPublications()
 
-                licenses {
-                    license {
-                        name = 'The Apache License, Version 2.0'
-                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    }
-                }
+    pom {
+        name = 'MapStruct Plugin'
+        description = 'Automatic MapStruct configuration for Gradle'
+        inceptionYear = '2021'
+        url = 'https://github.com/AkaZver/mapstruct-plugin'
 
-                developers {
-                    developer {
-                        id = 'akazver'
-                        name = 'Vasiliy Sobolev'
-                        email = 'aka.zver.007@gmail.com'
-                        url = 'https://github.com/AkaZver'
-                    }
-                }
-
-                scm {
-                    connection = 'scm:git:git://github.com/AkaZver/mapstruct-plugin.git'
-                    developerConnection = 'scm:git:ssh://github.com/AkaZver/mapstruct-plugin.git'
-                    url = 'https://github.com/AkaZver/mapstruct-plugin'
-                }
+        licenses {
+            license {
+                name = 'The Apache License, Version 2.0'
+                url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                distribution = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
             }
         }
-    }
 
-    repositories {
-        maven {
-            name = 'localRepo'
-            url = layout.buildDirectory.dir('local-repo')
+        developers {
+            developer {
+                id = 'akazver'
+                name = 'Vasiliy Sobolev'
+                email = 'aka.zver.007@gmail.com'
+                url = 'https://github.com/AkaZver'
+            }
+        }
+
+        scm {
+            url = 'https://github.com/AkaZver/mapstruct-plugin'
+            connection = 'scm:git:git://github.com/AkaZver/mapstruct-plugin.git'
+            developerConnection = 'scm:git:ssh://github.com/AkaZver/mapstruct-plugin.git'
         }
     }
-}
-
-signing {
-    def signingKey = System.getenv("SIGNING_KEY")
-    def signingPassword = System.getenv("SIGNING_PASSWORD")
-    required = signingKey != null && !version.toString().endsWith('SNAPSHOT')
-    if (signingKey != null) {
-        useInMemoryPgpKeys(signingKey, signingPassword)
-    }
-    sign publishing.publications.pluginMaven
 }
 
 javadoc {

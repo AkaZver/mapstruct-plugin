@@ -179,36 +179,10 @@ jobs:
       - name: Set version from tag
         run: echo "RELEASE_VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
 
-      - name: Publish to local repository
+      - name: Publish to Maven Central
         env:
-          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
-          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
-        run: ./gradlew publishPluginMavenPublicationToLocalRepoRepository
-
-      - name: Create bundle
-        run: |
-          cd build/local-repo
-          find . -type f -name "*.asc" -o -name "*.jar" -o -name "*.pom" | sort
-          zip -r ../central-bundle.zip .
-          cd ..
-          ls -lh central-bundle.zip
-
-      - name: Verify bundle structure
-        run: |
-          echo "Bundle contents:"
-          unzip -l build/central-bundle.zip
-          echo ""
-          echo "Bundle size:"
-          ls -lh build/central-bundle.zip
-
-      - name: Upload to Central Portal
-        env:
-          SONATYPE_USERNAME: ${{ secrets.SONATYPE_TOKEN_USERNAME }}
-          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_TOKEN_PASSWORD }}
-        run: |
-          curl --fail -v -X POST \
-            -H "Authorization: Bearer $(echo -n ${SONATYPE_USERNAME}:${SONATYPE_PASSWORD} | base64)" \
-            -F "file=@build/central-bundle.zip" \
-            -F "name=mapstruct-plugin-${{ github.ref_name }}" \
-            -F "publishingType=AUTOMATIC" \
-            https://central.sonatype.com/api/v1/publisher/upload
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.SONATYPE_TOKEN_USERNAME }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.SONATYPE_TOKEN_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_KEY }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_PASSWORD }}
+        run: ./gradlew publishToMavenCentral
