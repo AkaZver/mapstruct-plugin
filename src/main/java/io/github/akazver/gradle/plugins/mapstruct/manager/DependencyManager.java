@@ -95,7 +95,7 @@ public class DependencyManager {
 
         if (hasProtobuf) {
             LOGGER.lifecycle(ADDING_MESSAGE, "Protobuf");
-            addDependency(PROTOBUF_SPI_IMPL);
+            addDependency(PROTOBUF_SPI_IMPL, processorConfig);
         }
     }
 
