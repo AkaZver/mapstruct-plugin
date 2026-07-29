@@ -22,13 +22,6 @@ gradlePlugin {
             implementationClass = 'io.github.akazver.gradle.plugins.mapstruct.MapstructPlugin'
             tags.set(['mapstruct', 'mapping', 'lombok', 'spring', 'quarkus', 'camel', 'protobuf'])
         }
-        mapstructLegacy {
-            id = 'com.github.akazver.mapstruct'
-            displayName = 'MapStruct Plugin (Legacy)'
-            description = 'Automatic MapStruct configuration (legacy ID, use io.github.akazver.mapstruct instead)'
-            implementationClass = 'io.github.akazver.gradle.plugins.mapstruct.MapstructPlugin'
-            tags.set(['mapstruct', 'mapping', 'lombok', 'spring', 'quarkus', 'camel', 'protobuf'])
-        }
     }
 }
 
