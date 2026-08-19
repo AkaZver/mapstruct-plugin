@@ -50,7 +50,7 @@ public class DependencyManager {
     }
 
     private void addRequiredDependencies(String processorConfig) {
-        LOGGER.lifecycle(ADDING_MESSAGE, "MapStruct");
+        LOGGER.info(ADDING_MESSAGE, "MapStruct");
         addDependency(MAPSTRUCT);
         addDependency(MAPSTRUCT_PROCESSOR, processorConfig);
     }
@@ -65,19 +65,19 @@ public class DependencyManager {
         boolean hasProtobuf = hasExtension("protobuf") || hasDependency(PROTOBUF_JAVA);
 
         if (hasLombok && !hasBinding) {
-            LOGGER.lifecycle(ADDING_MESSAGE, "Lombok");
+            LOGGER.info(ADDING_MESSAGE, "Lombok");
             addDependency(LOMBOK_MAPSTRUCT_BINDING, processorConfig);
         }
 
         if (hasSpringBoot || hasSpring) {
-            LOGGER.lifecycle(ADDING_MESSAGE, "Spring");
+            LOGGER.info(ADDING_MESSAGE, "Spring");
             addDependency(MAPSTRUCT_SPRING_EXTENSIONS, processorConfig);
             addDependency(MAPSTRUCT_SPRING_ANNOTATIONS);
             addDependency(MAPSTRUCT_SPRING_TEST_EXTENSIONS);
         }
 
         if (hasCamel) {
-            LOGGER.lifecycle(ADDING_MESSAGE, "Camel");
+            LOGGER.info(ADDING_MESSAGE, "Camel");
 
             if (hasSpringBoot) {
                 addDependency(CAMEL_MAPSTRUCT_STARTER);
@@ -89,12 +89,12 @@ public class DependencyManager {
         }
 
         if (hasQuarkus) {
-            LOGGER.lifecycle(ADDING_MESSAGE, "Quarkus");
+            LOGGER.info(ADDING_MESSAGE, "Quarkus");
             addDependency(QUARKUS_MAPSTRUCT);
         }
 
         if (hasProtobuf) {
-            LOGGER.lifecycle(ADDING_MESSAGE, "Protobuf");
+            LOGGER.info(ADDING_MESSAGE, "Protobuf");
             addDependency(PROTOBUF_SPI_IMPL, processorConfig);
         }
     }
@@ -116,7 +116,7 @@ public class DependencyManager {
     }
 
     private void addDependency(PluginDependency pluginDependency, String configuration) {
-        LOGGER.lifecycle(DEPENDENCY_PREFIX, pluginDependency.getId());
+        LOGGER.info(DEPENDENCY_PREFIX, pluginDependency.getId());
         dependencies.add(configuration, pluginDependency.getId());
     }
 
